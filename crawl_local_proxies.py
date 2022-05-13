@@ -1,4 +1,4 @@
-def get_proxies_from_file(filename: str = 'proxies.txt') -> set():
+def get_proxies_from_file(filename: str = 'proxies_.txt') -> set():
     queue_proxies = set()
     print("\nReading from", filename)
     try:

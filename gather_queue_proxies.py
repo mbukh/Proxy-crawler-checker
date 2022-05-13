@@ -19,7 +19,7 @@ def gather_queue_proxies( current_queue: list = [],
     # OLD PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if rescan_old_proxies:
         oldLen = len(queue_proxies)
-        old_proxies = crawl_local_proxies.get_proxies_from_file(filename='proxies.txt')
+        old_proxies = crawl_local_proxies.get_proxies_from_file(filename='proxies_.txt')
         queue_proxies.update( old_proxies )
         print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
     # ================================================

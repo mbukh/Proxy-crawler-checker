@@ -108,20 +108,20 @@ def main() -> int:
         if set_proxies:
             # SAVE VALIDATED PROXIES TO FILE
             # WORK DIR SET EARLIER TO SCRIPT DIR
-            print("\nWriting proxies.txt")
-            with open('proxies.txt', 'w') as f:
+            print("\nWriting proxies_.txt")
+            with open('proxies_.txt', 'w') as f:
                 f.writelines("\n".join(set_proxies))
             # ==============================
 
             # REPLACE FILE TO MAKE MACOS RELOAD LIBERATOR (WATCH FOLDERS SCRIPT MACOS)
             try:
-                os.remove('/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt')
+                os.remove('/Users/mbukhman/Downloads/Disbalance Liberator/proxies_.txt')
             except OSError:
                 pass
             sleep(2)
             try:
                 # import shutil
-                copyfile('proxies.txt', '/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt', follow_symlinks=True)
+                copyfile('proxies_.txt', '/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt', follow_symlinks=True)
             except Exception as e:
                 print("Unable to copy to /Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt", e)
             # ========================================================================
