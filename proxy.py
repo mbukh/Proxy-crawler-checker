@@ -44,7 +44,7 @@ def main() -> int:
     os.chdir(SCRIPT_DIR)
     # ===================================
 
-    MIN_PROXY_FOR_RECHECK = 80
+    MIN_PROXY_FOR_RECHECK = 100
     RECHECK_EVERY_MINS = 30
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
@@ -67,20 +67,13 @@ def main() -> int:
     # FILE "proxies_queue_unchecked.txt" AGE IN MINUTES
         lastMod = os.path.getmtime(SCRIPT_DIR + "proxies_queue_unchecked.txt")
         modFileAge = (time() - lastMod) / 60 # FILE AGE IN MINUTES
-        need_Online_Crawl = not modFileAge < RECHECK_EVERY_MINS / 3 # IF PROXIES WERE RECENTRLY ADDED TO FILE NO NEED TO ONLINE CRAWL
+        need_Online_Crawl = not (modFileAge < RECHECK_EVERY_MINS / 3) # IF PROXIES WERE RECENTRLY ADDED TO FILE NO NEED TO ONLINE CRAWL
     except Exception as e:
         print('MISSING FILES "proxies_manual_queue.txt"\n')
 
     # MAIN LOOP: NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
     while True:
         print("\n[",datetime.now(), "]", "Starting routine...")
-
-        # RUN MAIN CRAWL ENGINE IF NEEDED
-        if len(set_proxies) < MIN_PROXY_FOR_RECHECK and CAN_ONLINE_CRAWL and need_Online_Crawl:
-            queue_proxies = crawl_proxy_services.crawl_online_proxy_services()
-        else:
-            print("\nNo need for online crawling. Rechecking proxies from files.")
-        # ===============================
         
         queue_proxies = gather_queue_proxies.gather_queue_proxies(
                                                                 current_queue = queue_proxies,
@@ -88,6 +81,14 @@ def main() -> int:
                                                                 rescan_old_proxies = True,
                                                                 collect_queue_history = True
                                                                 )
+
+        # RUN MAIN CRAWL ENGINE IF NEEDED
+        if len(set_proxies) < MIN_PROXY_FOR_RECHECK and CAN_ONLINE_CRAWL and need_Online_Crawl:
+            queue_proxies = crawl_proxy_services.crawl_online_proxy_services()
+        else:
+            print("\n[CRAWLING] No need for online crawling.")
+            print("First run or more that", MIN_PROXY_FOR_RECHECK, "working proxies.")
+        # ===============================
         
         # FILTER PROXIES
         # import utils_for_proxies
@@ -115,7 +116,7 @@ def main() -> int:
 
             # REPLACE FILE TO MAKE MACOS RELOAD LIBERATOR (WATCH FOLDERS SCRIPT MACOS)
             try:
-                os.remove('/Users/mbukhman/Downloads/Disbalance Liberator/proxies_.txt')
+                os.remove('/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt')
             except OSError:
                 pass
             sleep(2)
@@ -131,7 +132,7 @@ def main() -> int:
 
         # WAITING TIME WITH PROGRESS BAR <- RECHECK_EVERY_MINS
         print("Cool down for", RECHECK_EVERY_MINS, "mins")
-        for _ in tqdm.tqdm(range(RECHECK_EVERY_MINS), ascii=" ░▒", unit='m'): # MINUTES
+        for _ in tqdm.tqdm(range(RECHECK_EVERY_MINS), ascii="░  ", unit='m'): # MINUTES
             sleep(60) # ONE MINUTE ASLEEP
         print("\n")
         # ====================================================

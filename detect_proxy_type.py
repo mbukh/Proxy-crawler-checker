@@ -8,7 +8,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
     from random import sample, choice
     from tqdm import tqdm
 
-    TMOUT = 5
+    TMOUT = 6
     CHECK_URLS_COUNT = 5
 
     export_proxies = set()
@@ -27,7 +27,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
 
     # FUNCTION CHECKS ONE PROXY AND RETURNS TYPE://IP:PORT
     def checkProxy(proxy: str = '') -> str:
-        export_proxyType = ''
+        successCount = 0 # AT LEAST TWO SERVICE REPLY OK TO DETECT THE PROXY
 
         # CHECK IF PROXY CONSISTS OF TYPE -> USE IT
         if "://" in proxy:
@@ -41,6 +41,9 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
             # ua = UserAgent()
             # ua.chrome
             # ua.random
+        # or
+            # from random_user_agent.user_agent import UserAgent
+            # https://github.com/Luqman-Ud-Din/random_user_agent
             {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Safari/605.1.15'},
             {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/604.1'},
             {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0'},
@@ -100,11 +103,13 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
                         if my_ip and my_ip not in reqResponce.text:
                             if debug:
                                 print("[ Anonymous ]", my_ip, " => ", protocol, "returned by", checkerUrl)
-                            anonym_proxies.add(protocol[list(protocol)[0]])
+                            anonym_proxies.add(protocol[list(protocol)[0]]) # FIRST ELEMENT VALUE IN DICT
                         if debug:
                             print("[SUCCESS]:", "Connected to", checkerUrl, "via proxy", protocol)
                             # print("TEXT: ", reqResponce.text.replace("\n","").replace("\t"," ").replace("  ",""))
-                        return protocol[list(protocol)[0]] # FIRST ELEMENT IN DICT
+                        successCount += 1
+                        if successCount > 2:
+                            return protocol[list(protocol)[0]] # FIRST ELEMENT VALUE IN DICT
                     else:
                         if debug:
                             print("[STATUS_CODE]:", reqResponce.status_code, ", page:", checkerUrl, "via proxy", protocol)
@@ -121,15 +126,14 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
     # hosts_list not set ot empty
     if not queue_proxies:
         try:
-            txt_file = open("proxies_queue_unchecked.txt", "r")
-            queue_proxies = txt_file.read().splitlines() # last element not \n
-            queue_proxies = [x for x in queue_proxies if ":" in x]
+            import crawl_local_proxies
+            queue_proxies = crawl_local_proxies.get_proxies_from_file("proxies_queue_unchecked.txt")
         except:
             return None
 
     # progress bar
     with tqdm(total=len(queue_proxies), ascii="░▒█", unit='prx', smoothing=0, disable=debug) as pbar:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor: # no "max_workers" for optimally defined number of threads
+        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor: # no "max_workers" for optimally defined number of threads
             futures = [ executor.submit(checkProxy, proxy) for proxy in queue_proxies ]
             res = set()
             for future in concurrent.futures.as_completed(futures):

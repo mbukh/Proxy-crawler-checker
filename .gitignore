@@ -129,8 +129,8 @@ dmypy.json
 .pyre/
 
 # Custom files
-/.DS_Store
-/proxies_.txt
-/proxies_manual_queue.txt
-/proxies_queue_unchecked.txt
-/proxies_anonymous.txt
+.DS_Store
+proxies_.txt
+proxies_manual_queue.txt
+proxies_queue_unchecked.txt
+proxies_anonymous.txt

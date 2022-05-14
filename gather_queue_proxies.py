@@ -16,6 +16,13 @@ def gather_queue_proxies( current_queue: list = [],
     manual_proxies = []
     # =========================
 
+    # COLLECT PROXIES HISTORY FOR FUTURE RECHECK / WORK DIR SET EARLIER TO SCRIPT DIR
+    if collect_queue_history:
+        oldLen = len(queue_proxies)
+        queue_history_proxies = crawl_local_proxies.get_proxies_from_file(filename='proxies_queue_unchecked.txt')
+        queue_proxies.update( queue_history_proxies )
+        print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
+    # ===============================================================================
     # OLD PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if rescan_old_proxies:
         oldLen = len(queue_proxies)
@@ -30,13 +37,6 @@ def gather_queue_proxies( current_queue: list = [],
         queue_proxies.update( manual_proxies )
         print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
     # ===================================================
-    # COLLECT PROXIES HISTORY FOR FUTURE RECHECK / WORK DIR SET EARLIER TO SCRIPT DIR
-    if collect_queue_history:
-        oldLen = len(queue_proxies)
-        queue_history_proxies = crawl_local_proxies.get_proxies_from_file(filename='proxies_queue_unchecked.txt')
-        queue_proxies.update( queue_history_proxies )
-        print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
-    # ===============================================================================
 
     # REMOVE DUBLICATES
     # TWO TYPES OF PROXY: WITHOUT AND WITH TYPE TYPE://IP_ADDR:PORT
