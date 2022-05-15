@@ -178,9 +178,9 @@ def detect_proxies_type(
     # hosts_list not set ot empty
     if not queue_proxies:
         try:
-            import crawl_local_proxies
+            import parce_local_proxies
 
-            queue_proxies = crawl_local_proxies.get_proxies_from_file(
+            queue_proxies = parce_local_proxies.get_proxies_from_file(
                 "proxies_queue_unchecked.txt"
             )
         except:

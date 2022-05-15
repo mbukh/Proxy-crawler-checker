@@ -8,19 +8,19 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # =========
 
     # CRAWLING MODULES
-    import parce_free_proxy_cz
-    import parce_proxy_freeproxy_world
-    import parce_proxy_good_proxies_ru
-    import parce_proxy_nova_com
-    import parce_proxy_online_proxy_ru
-    import parce_proxy_premproxy_com
-    import parce_proxy_proxy_tools_com
-    import parce_proxy_proxydb_net
-    import parce_proxy_proxyranker_com
-    import parce_proxy_proxyscan_io
-    import parce_proxy_proxyscrape_com
-    import parce_proxy_spys_one
-    import parce_spyss_me
+    import crawlweb_free_proxy_cz
+    import crawlweb_freeproxy_world
+    import crawlweb_good_proxies_ru
+    import crawlweb_proxy_nova_com
+    import crawlweb_online_proxy_ru
+    import crawlweb_premproxy_com
+    import crawlweb_proxy_tools_com
+    import crawlweb_proxydb_net
+    import crawlweb_proxyranker_com
+    import crawlweb_proxyscan_io
+    import crawlweb_proxyscrape_com
+    import crawlweb_spys_one
+    import crawlweb_spyss_me
 
     # ==============
 
@@ -36,27 +36,36 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
         futures = [
             # executor.submit( parce_free_proxy_cz.get_proxy_free_proxy_cz ), # bans a lot
             executor.submit(
-                parce_proxy_proxy_tools_com.get_proxy_proxy_tools_com, minimized=False
+                crawlweb_proxy_tools_com.get_proxy_proxy_tools_com, minimized=False
             ),  # captcha
-            executor.submit(parce_proxy_freeproxy_world.get_proxy_freeproxy_world),
+            executor.submit(crawlweb_freeproxy_world.get_proxy_freeproxy_world),
             executor.submit(
-                parce_proxy_good_proxies_ru.parce_proxy_good_proxies_ru, country="ru"
+                crawlweb_good_proxies_ru.parce_proxy_good_proxies_ru, country="ru"
             ),
-            executor.submit(parce_proxy_nova_com.get_proxy_nova_com),
-            executor.submit(parce_proxy_online_proxy_ru.get_proxy_online_proxy_ru),
-            executor.submit(parce_proxy_premproxy_com.get_proxy_premproxy_com),
-            executor.submit(parce_proxy_proxyranker_com.get_proxy_proxyranker_com),
+            executor.submit(crawlweb_proxy_nova_com.get_proxy_nova_com),
+            executor.submit(crawlweb_online_proxy_ru.get_proxy_online_proxy_ru),
+            executor.submit(crawlweb_premproxy_com.get_proxy_premproxy_com),
+            executor.submit(crawlweb_proxyranker_com.get_proxy_proxyranker_com),
             executor.submit(
-                parce_proxy_proxyscan_io.parce_proxy_proxyscan_io, country="ru"
+                crawlweb_proxyscan_io.parce_proxy_proxyscan_io, country="ru"
             ),
-            executor.submit(parce_proxy_proxyscrape_com.parce_proxyscrape_com),
+            executor.submit(crawlweb_proxyscrape_com.parce_proxyscrape_com),
             executor.submit(
-                parce_proxy_spys_one.get_proxy_spys_one, minimized=False
+                crawlweb_spys_one.get_proxy_spys_one, minimized=False
             ),  # minimized windows hides data
-            executor.submit(parce_spyss_me.get_proxy_spyss, country="RU"),
+            executor.submit(crawlweb_spyss_me.get_proxy_spyss, country="RU"),
             executor.submit(
-                parce_proxy_proxydb_net.get_proxy_proxydb_net, minimized=False
+                crawlweb_proxydb_net.get_proxy_proxydb_net, minimized=False
             ),  # captcha
+            ##################### PARCE PROXY TYPES !! #######################
+            # https://www.socks-proxy.net/ "Russian Federation"
+            # https://freeproxylist.cc/online/Russia/
+            # https://www.proxydocker.com/en/proxylist/country/Russia
+            # https://www.proxyhub.me/en/ru-free-proxy-list.html
+            # https://premiumproxy.net/top-country-proxy-list/RU-Russia
+            # https://geonode.com/free-proxy-list/
+            # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
+            # https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1
         ]
         for future in concurrent.futures.as_completed(futures):
             queue_proxies.update(future.result() if future.result() else set())
