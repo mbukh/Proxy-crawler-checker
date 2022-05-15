@@ -7,12 +7,12 @@ def get_proxy_spyss(country: str = "RU") -> set:
     export_proxies = set()
 
     urls = [
-            'https://spys.me/proxy.txt',
-            'https://spys.me/socks.txt',
-            ]
+        "https://spys.me/proxy.txt",
+        "https://spys.me/socks.txt",
+    ]
 
     data = set()
-    
+
     for url in urls:
         try:
             resp = requests.get(url, timeout=TMOUT)
@@ -25,13 +25,13 @@ def get_proxy_spyss(country: str = "RU") -> set:
             return None
         sleep(5)
 
-    export_proxies = set([x.split()[0] for x in data if (x.find(country.upper()) != -1)]) #  and (x.find("-S") != -1) / SSL SUPPORT ONLY
+    export_proxies = set(
+        [x.split()[0] for x in data if (x.find(country.upper()) != -1)]
+    )  #  and (x.find("-S") != -1) / SSL SUPPORT ONLY
 
     print(SERVICE_NAME, len(export_proxies))
     return export_proxies
 
 
 if __name__ == "__main__":
-    print(
-        get_proxy_spyss()
-    )
+    print(get_proxy_spyss())

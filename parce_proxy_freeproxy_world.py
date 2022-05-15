@@ -12,20 +12,27 @@ def get_proxy_freeproxy_world() -> set:
     SERVICE_NAME = "Freeproxy.world:"
     TMOUT = 20
     export_proxies = set()
-    
+
     urls = [
-        'https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=1',
-        'https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=2',
-        'https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=3',
+        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=1",
+        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=2",
+        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=3",
     ]
 
     options = Options()
     options.headless = True
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager(log_level=logging.WARNING, print_first_line=False).install()), options=options)
-    except: 
+        driver = webdriver.Chrome(
+            service=Service(
+                ChromeDriverManager(
+                    log_level=logging.WARNING, print_first_line=False
+                ).install()
+            ),
+            options=options,
+        )
+    except:
         return None
-    
+
     for url in urls:
         try:
             driver.set_page_load_timeout(TMOUT)
@@ -35,22 +42,38 @@ def get_proxy_freeproxy_world() -> set:
 
         try:
             table_proxy = WebDriverWait(driver, TMOUT).until(
-                EC.presence_of_element_located((By.XPATH, "//table[@class='layui-table']"))
+                EC.presence_of_element_located(
+                    (By.XPATH, "//table[@class='layui-table']")
+                )
             )
-            rows_count = len(driver.find_elements(by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"))
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"
+                )
+            )
         except:
             print(SERVICE_NAME, "Page changed, data not found on page.")
             return None
 
-        for row_num in range(2,rows_count):
+        for row_num in range(2, rows_count):
             try:
-                ip = driver.find_element(by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr[" + str(row_num+1) + ']/td[1]')
-                port = driver.find_element(by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr[" + str(row_num+1) + ']/td[2]')
+                ip = driver.find_element(
+                    by=By.XPATH,
+                    value="//table[@class='layui-table']/tbody[1]/tr["
+                    + str(row_num + 1)
+                    + "]/td[1]",
+                )
+                port = driver.find_element(
+                    by=By.XPATH,
+                    value="//table[@class='layui-table']/tbody[1]/tr["
+                    + str(row_num + 1)
+                    + "]/td[2]",
+                )
                 export_proxies.add(ip.text + ":" + port.text)
             except:
                 continue
         sleep(5)
-    
+
     driver.quit()
 
     print(SERVICE_NAME, len(export_proxies))
@@ -58,6 +81,4 @@ def get_proxy_freeproxy_world() -> set:
 
 
 if __name__ == "__main__":
-    print(
-        get_proxy_freeproxy_world()
-    )
+    print(get_proxy_freeproxy_world())

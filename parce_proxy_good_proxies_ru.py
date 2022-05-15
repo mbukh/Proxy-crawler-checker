@@ -1,11 +1,15 @@
-def parce_proxy_good_proxies_ru(country: str = 'RU') -> set:
+def parce_proxy_good_proxies_ru(country: str = "RU") -> set:
     import requests
 
     SERVICE_NAME = "Good-proxies.ru"
     TMOUT = 20
     export_proxies = set()
-    
-    url = "https://api.good-proxies.ru/getfree.php?count=100&ping=8000&time=600&works=100&country%5B%5D="+ country.lower() +"&key=freeproxy"
+
+    url = (
+        "https://api.good-proxies.ru/getfree.php?count=100&ping=8000&time=600&works=100&country%5B%5D="
+        + country.lower()
+        + "&key=freeproxy"
+    )
 
     try:
         resp = requests.get(url, timeout=TMOUT)
@@ -24,6 +28,4 @@ def parce_proxy_good_proxies_ru(country: str = 'RU') -> set:
 
 
 if __name__ == "__main__":
-    print(
-        parce_proxy_good_proxies_ru(country='RU')
-    )
+    print(parce_proxy_good_proxies_ru(country="RU"))

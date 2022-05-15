@@ -14,20 +14,27 @@ def get_proxy_proxydb_net(minimized: bool = False, showBrowser: bool = True) -> 
     TMOUT = 30
     export_proxies = set()
 
-    url = 'https://proxydb.net/?protocol=https&protocol=socks4&protocol=socks5&anonlvl=2&anonlvl=3&anonlvl=4&country=RU'
+    url = "https://proxydb.net/?protocol=https&protocol=socks4&protocol=socks5&anonlvl=2&anonlvl=3&anonlvl=4&country=RU"
 
     options = Options()
     options.headless = not showBrowser
     options.add_argument("--window-size=1024,768")
     options.add_argument("--window-position=0,100")
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager(log_level=logging.WARNING, print_first_line=False).install()), options=options)
+        driver = webdriver.Chrome(
+            service=Service(
+                ChromeDriverManager(
+                    log_level=logging.WARNING, print_first_line=False
+                ).install()
+            ),
+            options=options,
+        )
     except:
         print(SERVICE_NAME, "Can't connect to the server.")
         return None
-        
+
     if minimized:
-        driver.minimize_window() # if no user interaction needed, but browser must be open
+        driver.minimize_window()  # if no user interaction needed, but browser must be open
 
     try:
         driver.set_page_load_timeout(TMOUT)
@@ -35,15 +42,17 @@ def get_proxy_proxydb_net(minimized: bool = False, showBrowser: bool = True) -> 
     except:
         print("Can't connect to a page ", url)
         return None
-    
+
     run = True
 
     while run:
         try:
             table_proxy = WebDriverWait(driver, TMOUT).until(
                 EC.presence_of_element_located((By.XPATH, "//div/div/table/tbody/tr"))
-                )
-            rows_count = len(driver.find_elements(by=By.XPATH, value="//div/div/table/tbody/tr"))
+            )
+            rows_count = len(
+                driver.find_elements(by=By.XPATH, value="//div/div/table/tbody/tr")
+            )
         except:
             print("Proxydb.net: Page changed, data not found on page.")
             break
@@ -52,25 +61,32 @@ def get_proxy_proxydb_net(minimized: bool = False, showBrowser: bool = True) -> 
 
         for row_num in range(rows_count):
             try:
-                ip_port = driver.find_element(by=By.XPATH, value="//div/div/table/tbody/tr[" + str(row_num+1) + ']/td[1]')
+                ip_port = driver.find_element(
+                    by=By.XPATH,
+                    value="//div/div/table/tbody/tr[" + str(row_num + 1) + "]/td[1]",
+                )
                 export_proxies.add(ip_port.text)
             except:
                 continue
-        
+
         # new page not detected ( new proxies ) -> driver.quit()
         if len(export_proxies) == oldLen:
             break
-        
+
         try:
             next_page = WebDriverWait(driver, TMOUT).until(
-                EC.presence_of_element_located((By.XPATH, "//*[@id='paging-form']/nav/ul/button"))
+                EC.presence_of_element_located(
+                    (By.XPATH, "//*[@id='paging-form']/nav/ul/button")
                 )
+            )
         except:
             print("Proxydb.net: Can't perform next page.")
             break
-        
-        #scroll down a page and mouse clicks
-        driver.execute_script("var scrollingElement = (document.scrollingElement || document.body);scrollingElement.scrollTop = scrollingElement.scrollHeight;")
+
+        # scroll down a page and mouse clicks
+        driver.execute_script(
+            "var scrollingElement = (document.scrollingElement || document.body);scrollingElement.scrollTop = scrollingElement.scrollHeight;"
+        )
         sleep(1)
         actions = ActionChains(driver)
         actions.move_to_element(next_page)
@@ -79,10 +95,11 @@ def get_proxy_proxydb_net(minimized: bool = False, showBrowser: bool = True) -> 
         sleep(10)
 
         try:
-            rows_count = len(driver.find_elements(by=By.XPATH, value="//div/div/table/tbody/tr"))
+            rows_count = len(
+                driver.find_elements(by=By.XPATH, value="//div/div/table/tbody/tr")
+            )
         except:
             break
-
 
     driver.quit()
 
@@ -91,6 +108,4 @@ def get_proxy_proxydb_net(minimized: bool = False, showBrowser: bool = True) -> 
 
 
 if __name__ == "__main__":
-    print(
-        get_proxy_proxydb_net()
-    )
+    print(get_proxy_proxydb_net())

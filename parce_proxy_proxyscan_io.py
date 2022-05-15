@@ -1,11 +1,14 @@
-def parce_proxy_proxyscan_io(country: str = 'RU') -> set:
+def parce_proxy_proxyscan_io(country: str = "RU") -> set:
     import requests
 
     SERVICE_NAME = "Proxyscan.io:"
     TMOUT = 20
     export_proxies = set()
-    
-    url ='https://www.proxyscan.io/api/proxy?limit=100&type=socks4,socks5,https&format=txt&country='+country.lower()
+
+    url = (
+        "https://www.proxyscan.io/api/proxy?limit=100&type=socks4,socks5,https&format=txt&country="
+        + country.lower()
+    )
 
     try:
         resp = requests.get(url, timeout=TMOUT)
@@ -24,6 +27,4 @@ def parce_proxy_proxyscan_io(country: str = 'RU') -> set:
 
 
 if __name__ == "__main__":
-    print(
-        parce_proxy_proxyscan_io(country='ru')
-    )
+    print(parce_proxy_proxyscan_io(country="ru"))
