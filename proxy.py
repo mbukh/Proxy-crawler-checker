@@ -1,4 +1,7 @@
-def main() -> int:
+import sys
+
+
+def main(force_online_crawl: bool = False) -> int:
     # BUILT-INS
     import os
     from time import sleep, time
@@ -51,7 +54,7 @@ def main() -> int:
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
     need_Online_Crawl = True
-    forceOnlineCrawl = False
+    forceOnlineCrawl = force_online_crawl
     is_ManualFileChanged = False
     countRoutines = 0
 
@@ -94,10 +97,10 @@ def main() -> int:
 
         # RUN MAIN CRAWL ENGINE IF NEEDED
         if (
-            len(set_proxies) < MIN_PROXY_FOR_RECHECK
+            forceOnlineCrawl
+            or len(set_proxies) < MIN_PROXY_FOR_RECHECK
             and CAN_ONLINE_CRAWL
             and need_Online_Crawl
-            or forceOnlineCrawl
         ):
             queue_proxies.update(
                 crawl_proxy_services.crawl_online_proxy_services(
@@ -184,4 +187,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    main()
+    if "force" in sys.argv or "-force" in sys.argv:
+        main(force_online_crawl=True)
+    else:
+        main()

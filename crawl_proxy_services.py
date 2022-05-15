@@ -1,3 +1,6 @@
+from turtle import update
+
+
 def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # BUILT-INS
     import concurrent.futures  # multithreading
@@ -22,9 +25,9 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # ==============
 
     # CREATE A SET OF ALWAYS UNIQUE PROXIES
-    queue_proxies = set([x.split("://")[-1] for x in existing_proxies])
+    queue_proxies = set()
     # =====================================
-    oldLen = len(queue_proxies)
+    oldLen = len(existing_proxies)
 
     # STAR PARCING SOURCES IN MULTITHREADING
     print("\nParcing websites...\n")
@@ -59,6 +62,12 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
             queue_proxies.update(future.result() if future.result() else set())
     # ====================================
 
+    # REMOVE EXISTING PROXIES WITHOUT TYPE://
+    queue_proxies.difference_update([x.split("://")[-1] for x in existing_proxies])
+
+    # RETURN EXISTING PROXIES CONTAITING TYPE://
+    queue_proxies.update(existing_proxies)
+
     if len(queue_proxies):
         print("\nParced", len(queue_proxies), "unique proxies.")
         print("Added", len(queue_proxies) - oldLen, "new unique proxies.\n")
@@ -67,4 +76,5 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
 
 
 if __name__ == "__main__":
-    print(crawl_online_proxy_services())
+    proxies = []
+    print(crawl_online_proxy_services(existing_proxies=proxies))

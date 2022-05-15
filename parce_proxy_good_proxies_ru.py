@@ -15,7 +15,9 @@ def parce_proxy_good_proxies_ru(country: str = "RU") -> set:
         resp = requests.get(url, timeout=TMOUT)
         if resp.status_code == 200:
             data = resp.text.split("\n")
-            export_proxies.update([x for x in data if ":" in x])
+            export_proxies.update(
+                [x for x in data if ":" in x and not ("script" in x or "span" in x)]
+            )
         else:
             print(SERVICE_NAME, "url responce error", url)
 
