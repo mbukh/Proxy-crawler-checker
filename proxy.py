@@ -49,7 +49,9 @@ def main() -> int:
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
     need_Online_Crawl = True
+    forceOnlineCrawl = False
     is_ManualFileChanged = False
+    countRoutines = 0
 
     queue_proxies = set()
     set_proxies = set()
@@ -75,19 +77,21 @@ def main() -> int:
     while True:
         print("\n[",datetime.now(), "]", "Starting routine...")
         
-        queue_proxies = gather_queue_proxies.gather_queue_proxies(
-                                                                current_queue = queue_proxies,
-                                                                scan_manual_proxies = is_ManualFileChanged,
-                                                                rescan_old_proxies = True,
-                                                                collect_queue_history = True
-                                                                )
+        queue_proxies.update(
+                    gather_queue_proxies.gather_queue_proxies(
+                                                        current_queue = set_proxies,
+                                                        scan_manual_proxies = is_ManualFileChanged,
+                                                        rescan_old_proxies = True,
+                                                        collect_queue_history = True
+                                                        ))
 
         # RUN MAIN CRAWL ENGINE IF NEEDED
-        if len(set_proxies) < MIN_PROXY_FOR_RECHECK and CAN_ONLINE_CRAWL and need_Online_Crawl:
-            queue_proxies = crawl_proxy_services.crawl_online_proxy_services()
+        if len(set_proxies) < MIN_PROXY_FOR_RECHECK and CAN_ONLINE_CRAWL and need_Online_Crawl or forceOnlineCrawl:
+            queue_proxies.update(
+                        crawl_proxy_services.crawl_online_proxy_services()
+                                )
         else:
             print("\n[CRAWLING] No need for online crawling.")
-            print("First run or more that", MIN_PROXY_FOR_RECHECK, "working proxies.")
         # ===============================
         
         # FILTER PROXIES
@@ -95,15 +99,12 @@ def main() -> int:
         # queue_proxies = utils_for_proxies.filter_proxies(queue_proxies)
         # ==============
 
-        # SUMMARY
-        if not len(queue_proxies):
-            print("\nNo proxy retrieved for detection.\n")
-        # =======
-
         # MAIN ENGINE: VALIDATE A PROXY AND ITS ANONIMITY
         if len(queue_proxies):
             print("\nDetecting working proxies and their types, anonymity:")
             set_proxies = detect_proxy_type.detect_proxies_type(queue_proxies, save_anonymous=True)
+        else:
+            print("\nNo proxy retrieved for detection.\n")
         # ===============================================
         
         if set_proxies:
@@ -127,15 +128,27 @@ def main() -> int:
                 print("Unable to copy to /Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt", e)
             # ========================================================================
 
-        print("\n",len(set_proxies),"working proxies remain and saved.\n")
-        print("Routine done.\n")
+            print("\n",len(set_proxies),"working proxies remained and saved.\n")
+        else:
+            print('No proxy was detected.')
+        
+        countRoutines += 1
+        if countRoutines % 4 == 0:
+            forceOnlineCrawl = True
+        else:
+            forceOnlineCrawl = False
 
-        # WAITING TIME WITH PROGRESS BAR <- RECHECK_EVERY_MINS
-        print("Cool down for", RECHECK_EVERY_MINS, "mins")
-        for _ in tqdm.tqdm(range(RECHECK_EVERY_MINS), ascii="░  ", unit='m'): # MINUTES
-            sleep(60) # ONE MINUTE ASLEEP
-        print("\n")
-        # ====================================================
+        print("Routine done", countRoutines, "time" if countRoutines == 1 else "times", "\n")
+
+        if len(set_proxies) >= MIN_PROXY_FOR_RECHECK:
+            # WAITING TIME WITH PROGRESS BAR <- RECHECK_EVERY_MINS
+            print("Cool down for", RECHECK_EVERY_MINS, "mins")
+            for _ in tqdm.tqdm(range(RECHECK_EVERY_MINS), ascii="░ •", unit='m'): # MINUTES
+                sleep(60) # ONE MINUTE ASLEEP
+            print("\n")
+            # ====================================================
+        else:
+            need_Online_Crawl = True
     # =====================================================================
     return 0
 

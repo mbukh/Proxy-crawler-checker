@@ -36,6 +36,10 @@ def get_proxy_proxy_tools_com(minimized: bool = False, showBrowser: bool = True)
         print(SERVICE_NAME, "Can't connect to a page ", url)
         return None
     
+
+                                # ADD PAGING !!
+
+
     # if captcha exists - pass it
     max_tries = 1
     tried = 0

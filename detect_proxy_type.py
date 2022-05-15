@@ -8,8 +8,8 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
     from random import sample, choice
     from tqdm import tqdm
 
-    TMOUT = 6
-    CHECK_URLS_COUNT = 5
+    TMOUT = 7
+    CHECK_URLS_COUNT = 8
 
     export_proxies = set()
     anonym_proxies = set()
@@ -27,7 +27,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
 
     # FUNCTION CHECKS ONE PROXY AND RETURNS TYPE://IP:PORT
     def checkProxy(proxy: str = '') -> str:
-        successCount = 0 # AT LEAST TWO SERVICE REPLY OK TO DETECT THE PROXY
+        successCount = 0 # AT LEAST TWO SERVICES REPLY OK TO DETECT A WORKING PROXY
 
         # CHECK IF PROXY CONSISTS OF TYPE -> USE IT
         if "://" in proxy:
@@ -108,7 +108,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
                             print("[SUCCESS]:", "Connected to", checkerUrl, "via proxy", protocol)
                             # print("TEXT: ", reqResponce.text.replace("\n","").replace("\t"," ").replace("  ",""))
                         successCount += 1
-                        if successCount > 2:
+                        if successCount >= 2:
                             return protocol[list(protocol)[0]] # FIRST ELEMENT VALUE IN DICT
                     else:
                         if debug:
@@ -133,7 +133,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
 
     # progress bar
     with tqdm(total=len(queue_proxies), ascii="░▒█", unit='prx', smoothing=0, disable=debug) as pbar:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor: # no "max_workers" for optimally defined number of threads
+        with concurrent.futures.ThreadPoolExecutor(max_workers=120) as executor: # no "max_workers" for optimally defined number of threads
             futures = [ executor.submit(checkProxy, proxy) for proxy in queue_proxies ]
             res = set()
             for future in concurrent.futures.as_completed(futures):
