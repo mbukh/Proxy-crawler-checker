@@ -1,4 +1,4 @@
-def parce_proxy_good_proxies_ru(country: str = "RU") -> set:
+def good_proxies_ru(country: str = "RU") -> set:
     import requests
 
     SERVICE_NAME = "Good-proxies.ru"
@@ -30,4 +30,4 @@ def parce_proxy_good_proxies_ru(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(parce_proxy_good_proxies_ru(country="RU"))
+    print(good_proxies_ru(country="RU"))

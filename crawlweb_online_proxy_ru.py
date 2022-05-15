@@ -1,4 +1,4 @@
-def get_proxy_online_proxy_ru() -> set:
+def online_proxy_ru() -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -72,4 +72,4 @@ def get_proxy_online_proxy_ru() -> set:
 
 
 if __name__ == "__main__":
-    print(get_proxy_online_proxy_ru())
+    print(online_proxy_ru())

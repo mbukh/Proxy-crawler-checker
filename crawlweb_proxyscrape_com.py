@@ -1,4 +1,4 @@
-def parce_proxyscrape_com() -> set:
+def proxyscrape_com() -> set:
     import requests
     from time import sleep
 
@@ -33,4 +33,4 @@ def parce_proxyscrape_com() -> set:
 
 
 if __name__ == "__main__":
-    print(parce_proxyscrape_com())
+    print(proxyscrape_com())

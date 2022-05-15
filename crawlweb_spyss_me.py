@@ -1,4 +1,4 @@
-def get_proxy_spyss(country: str = "RU") -> set:
+def spyss_github(country: str = "RU") -> set:
     import requests
     from time import sleep
 
@@ -34,4 +34,4 @@ def get_proxy_spyss(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(get_proxy_spyss())
+    print(spyss_github())

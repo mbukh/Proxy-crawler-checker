@@ -1,4 +1,4 @@
-def parce_proxy_proxyscan_io(country: str = "RU") -> set:
+def proxyscan_io(country: str = "RU") -> set:
     import requests
 
     SERVICE_NAME = "Proxyscan.io:"
@@ -27,4 +27,4 @@ def parce_proxy_proxyscan_io(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(parce_proxy_proxyscan_io(country="ru"))
+    print(proxyscan_io(country="ru"))

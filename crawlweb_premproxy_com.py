@@ -1,4 +1,4 @@
-def get_proxy_premproxy_com() -> set:
+def premproxy_com() -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -78,4 +78,4 @@ def get_proxy_premproxy_com() -> set:
 
 
 if __name__ == "__main__":
-    print(get_proxy_premproxy_com())
+    print(premproxy_com())

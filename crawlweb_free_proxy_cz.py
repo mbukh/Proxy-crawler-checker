@@ -1,4 +1,4 @@
-def get_proxy_free_proxy_cz() -> set:
+def free_proxy_cz() -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -83,4 +83,4 @@ def get_proxy_free_proxy_cz() -> set:
 
 
 if __name__ == "__main__":
-    print(get_proxy_free_proxy_cz())
+    print(free_proxy_cz())

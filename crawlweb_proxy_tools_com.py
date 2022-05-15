@@ -1,4 +1,4 @@
-def get_proxy_proxy_tools_com(minimized: bool = False, showBrowser: bool = True) -> set:
+def proxy_tools_com(minimized: bool = False, showBrowser: bool = True) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -107,4 +107,4 @@ def get_proxy_proxy_tools_com(minimized: bool = False, showBrowser: bool = True)
 
 
 if __name__ == "__main__":
-    print(get_proxy_proxy_tools_com())
+    print(proxy_tools_com())

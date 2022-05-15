@@ -1,4 +1,4 @@
-def get_proxy_freeproxy_world() -> set:
+def freeproxy_world() -> set:
     from time import sleep
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
@@ -81,4 +81,4 @@ def get_proxy_freeproxy_world() -> set:
 
 
 if __name__ == "__main__":
-    print(get_proxy_freeproxy_world())
+    print(freeproxy_world())
