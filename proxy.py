@@ -49,7 +49,7 @@ def main(force_online_crawl: bool = False) -> int:
     os.chdir(SCRIPT_DIR)
     # ===================================
 
-    MIN_PROXY_FOR_RECHECK = 100
+    MINIMUM_PROXY_FOR_RECHECK = 100
     RECHECK_EVERY_MINS = 30
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
@@ -98,7 +98,7 @@ def main(force_online_crawl: bool = False) -> int:
         # RUN MAIN CRAWL ENGINE IF NEEDED
         if (
             forceOnlineCrawl
-            or len(set_proxies) < MIN_PROXY_FOR_RECHECK
+            or len(set_proxies) < MINIMUM_PROXY_FOR_RECHECK
             and CAN_ONLINE_CRAWL
             and need_Online_Crawl
         ):
@@ -165,13 +165,16 @@ def main(force_online_crawl: bool = False) -> int:
             forceOnlineCrawl = False
 
         print(
+            "[",
+            datetime.now(),
+            "]",
             "Routine done",
             countRoutines,
             "time" if countRoutines == 1 else "times",
             "\n",
         )
 
-        if len(set_proxies) >= MIN_PROXY_FOR_RECHECK:
+        if len(set_proxies) >= MINIMUM_PROXY_FOR_RECHECK:
             # WAITING TIME WITH PROGRESS BAR <- RECHECK_EVERY_MINS
             print("Cool down for", RECHECK_EVERY_MINS, "mins")
             for _ in tqdm.tqdm(
