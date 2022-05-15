@@ -1,4 +1,4 @@
-def crawl_online_proxy_services() -> set:
+def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # BUILT-INS
     import concurrent.futures # multithreading
     # =========
@@ -20,8 +20,9 @@ def crawl_online_proxy_services() -> set:
     # ==============
 
     # CREATE A SET OF ALWAYS UNIQUE PROXIES
-    queue_proxies = set()
+    queue_proxies = set([x.split('://')[-1] for x in existing_proxies])
     # =====================================
+    oldLen = len(queue_proxies)
 
     # STAR PARCING SOURCES IN MULTITHREADING 
     print("\nParcing websites...\n")
@@ -45,9 +46,10 @@ def crawl_online_proxy_services() -> set:
         for future in concurrent.futures.as_completed(futures):
             queue_proxies.update( future.result() if future.result() else set() )
     # ====================================
-    
+
     if len(queue_proxies):
-        print("\nParced", len(queue_proxies), "unique proxies\n")
+        print("\nParced", len(queue_proxies), "unique proxies.")
+        print("Added", len(queue_proxies) - oldLen, "new unique proxies.\n")
 
     return queue_proxies
 

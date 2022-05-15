@@ -87,8 +87,8 @@ def main() -> int:
 
         # RUN MAIN CRAWL ENGINE IF NEEDED
         if len(set_proxies) < MIN_PROXY_FOR_RECHECK and CAN_ONLINE_CRAWL and need_Online_Crawl or forceOnlineCrawl:
-            queue_proxies.update(
-                        crawl_proxy_services.crawl_online_proxy_services()
+            queue_proxies.update( 
+                        crawl_proxy_services.crawl_online_proxy_services(existing_proxies = queue_proxies)
                                 )
         else:
             print("\n[CRAWLING] No need for online crawling.")
@@ -120,7 +120,7 @@ def main() -> int:
                 os.remove('/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt')
             except OSError:
                 pass
-            sleep(2)
+            sleep(3)
             try:
                 # import shutil
                 copyfile('proxies_.txt', '/Users/mbukhman/Downloads/Disbalance Liberator/proxies.txt', follow_symlinks=True)

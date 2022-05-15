@@ -7,7 +7,10 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
     import concurrent.futures
     from random import sample, choice
     from tqdm import tqdm
-
+    # DISABLE VERIFYE=FALSE WARNING
+    from urllib3 import disable_warnings
+    disable_warnings()
+    # =============================
     TMOUT = 7
     CHECK_URLS_COUNT = 8
 
@@ -96,6 +99,7 @@ def detect_proxies_type(queue_proxies: list = [], save_anonymous: bool = True, d
                     reqResponce = requests.get( checkerUrl,
                                                 proxies = protocol,
                                                 headers = randomHeaders,
+                                                verify = False,
                                                 timeout = TMOUT
                                                 )
                     if reqResponce.status_code == 200 and reqResponce.text:
