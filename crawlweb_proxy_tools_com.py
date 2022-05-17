@@ -82,14 +82,17 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
             except:
                 break
 
-        rows_count = len(
-            driver.find_elements(
-                by=By.XPATH, value="//div[@id='ct-main']/main/table/tbody/tr"
+        try:
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH, value="//div[@id='ct-main']/main/table/tbody/tr"
+                )
             )
-        )
-        if rows_count == 0:
-            # print(SERVICE_NAME, "Page changed, data not found on page.")
-            continue
+            if rows_count == 0:
+                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                break
+        except:
+            break
 
         for row_num in range(rows_count):
             try:

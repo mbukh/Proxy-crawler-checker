@@ -103,14 +103,17 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             print(SERVICE_NAME, "Page changed, data not found on page.")
             return None
 
-        rows_count = len(
-            driver.find_elements(
-                by=By.XPATH, value="//table[2]/tbody/tr[4]/td/table/tbody/tr"
+        try:
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH, value="//table[2]/tbody/tr[4]/td/table/tbody/tr"
+                )
             )
-        )
-        if rows_count == 0:
-            # print(SERVICE_NAME, "Page changed, data not found on page.")
-            continue
+            if rows_count == 0:
+                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                break
+        except:
+            break
 
         for row_num in range(3, rows_count - 1):
             try:

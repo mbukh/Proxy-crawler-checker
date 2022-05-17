@@ -66,13 +66,16 @@ def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
                 # print(SERVICE_NAME, "Timeout connect to a page", url)
                 return export_proxies
 
-            rows_count = len(
-                driver.find_elements(
-                    by=By.XPATH, value='//div[@id="proxylist"]/table/tbody/tr'
+            try:
+                rows_count = len(
+                    driver.find_elements(
+                        by=By.XPATH, value='//div[@id="proxylist"]/table/tbody/tr'
+                    )
                 )
-            )
-            if rows_count == 0:
-                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                if rows_count == 0:
+                    # print(SERVICE_NAME, "Page changed, data not found on page.")
+                    break
+            except:
                 break
 
             for row_num in range(rows_count):

@@ -51,15 +51,18 @@ def online_proxy_ru(minimized: bool = False, hideBrowser: bool = False) -> set:
         except:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
-        rows_count = len(
-            driver.find_elements(
-                by=By.XPATH,
-                value="//table/tbody/tr[2]/td/table[3]/tbody/tr/td[4]/table/tbody/tr",
+        try:
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH,
+                    value="//table/tbody/tr[2]/td/table[3]/tbody/tr/td[4]/table/tbody/tr",
+                )
             )
-        )
-        if rows_count == 0:
-            # print(SERVICE_NAME, "Page changed, data not found on page.")
-            continue
+            if rows_count == 0:
+                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                break
+        except:
+            break
 
         for row_num in range(1, 15):
             try:

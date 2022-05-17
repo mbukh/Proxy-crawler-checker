@@ -62,14 +62,17 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
         except:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
-        rows_count = len(
-            driver.find_elements(
-                by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"
+        try:
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"
+                )
             )
-        )
-        if rows_count == 0:
-            # print(SERVICE_NAME, "Page changed, data not found on page.")
-            continue
+            if rows_count == 0:
+                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                break
+        except:
+            break
 
         for row_num in range(2, rows_count):
             try:

@@ -52,11 +52,17 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
         except:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
-        rows_count = len(
-            driver.find_elements(
-                by=By.XPATH, value="//div[@class='data']/table/tbody/tr"
+        try:
+            rows_count = len(
+                driver.find_elements(
+                    by=By.XPATH, value="//div[@class='data']/table/tbody/tr"
+                )
             )
-        )
+            if rows_count == 0:
+                # print(SERVICE_NAME, "Page changed, data not found on page.")
+                break
+        except:
+            break
 
         for row_num in range(rows_count):
             try:
