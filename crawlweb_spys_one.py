@@ -20,7 +20,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
 
     options = Options()
     options.headless = hideBrowser
-    options.add_argument("--window-position=400,500")
+    options.add_argument("--window-position=0,500")
     options.add_argument("--window-size=1200,500")
 
     options.add_argument("--disable-gpu")

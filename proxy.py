@@ -121,7 +121,9 @@ def main(force_online_crawl: bool = False) -> int:
         if len(queue_proxies):
             print("\nDetecting working proxies and their types, anonymity:")
             set_proxies = detect_proxy_type.detect_proxies_type(
-                queue_proxies, save_anonymous=True
+                queue_proxies,
+                save_anonymous=True,
+                concurrect_checks=50,
             )
         else:
             print("\nNo proxy retrieved for detection.\n")

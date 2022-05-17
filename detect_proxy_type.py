@@ -1,5 +1,8 @@
 def detect_proxies_type(
-    queue_proxies: list = [], save_anonymous: bool = True, debug: bool = False
+    queue_proxies: list = [],
+    save_anonymous: bool = True,
+    debug: bool = False,
+    concurrect_checks: int = 50,
 ) -> set:
     # POSSIBLE FORMATS FOR hosts_list:
     # A) IP_ADDR:PORT
@@ -15,8 +18,8 @@ def detect_proxies_type(
 
     disable_warnings()
     # =============================
-    TMOUT = 7
-    CHECK_URLS_COUNT = 8
+    TMOUT = 5
+    CHECK_URLS_COUNT = 6
     SUCCESS_TIMES = 1
 
     export_proxies = set()
@@ -192,7 +195,7 @@ def detect_proxies_type(
         total=len(queue_proxies), ascii="░▒█", unit="prx", smoothing=0, disable=debug
     ) as pbar:
         with concurrent.futures.ThreadPoolExecutor(
-            max_workers=120
+            max_workers=concurrect_checks
         ) as executor:  # no "max_workers" for optimally defined number of threads
             futures = [executor.submit(checkProxy, proxy) for proxy in queue_proxies]
             res = set()

@@ -33,7 +33,7 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
 
     # STAR PARCING SOURCES IN MULTITHREADING
     print("\nParcing websites...\n")
-    with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         res = set()
         futures = [
             executor.submit(crawlweb_free_proxy_cz.free_proxy_cz),  # bans a lot
@@ -52,13 +52,12 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
             executor.submit(crawlweb_spys_one.spys_one),  # minimized windows hides data
             executor.submit(crawlweb_spyss_me.spyss_github, country="RU"),
             ##################### PARCE PROXY TYPES !! #######################
-            # https://www.proxydocker.com/en/proxylist/country/Russia
-            # https://www.proxyhub.me/en/ru-free-proxy-list.html
-            # https://premiumproxy.net/top-country-proxy-list/RU-Russia
             # https://geonode.com/free-proxy-list/
             # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
             # https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1
+            # https://www.proxyhub.me/en/ru-free-proxy-list.html
             # https://freeproxylist.cc/online/Russia/ ## NAH - no ssl search, no protocol
+            # https://premiumproxy.net/top-country-proxy-list/RU-Russia ## COPY OF spys_one
         ]
         for future in concurrent.futures.as_completed(futures):
             queue_proxies.update(future.result() if future.result() else set())

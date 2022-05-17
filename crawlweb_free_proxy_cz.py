@@ -23,7 +23,9 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
 
     options = Options()
     options.headless = hideBrowser
-    options.add_argument("--window-size=1400,900")
+    options.add_argument("--window-position=400,500")
+    options.add_argument("--window-size=1200,500")
+
     options.add_argument("--disable-gpu")
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--disable-extensions")
