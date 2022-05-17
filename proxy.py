@@ -95,6 +95,12 @@ def main(force_online_crawl: bool = False) -> int:
             )
         )
 
+        # KILL TERMINAL PROCESS TO SAVE INTERNET FOR CRAWLING AND DETECTING
+        from subprocess import call
+
+        call(["osascript", "-e", 'tell application "Terminal" to quit'])
+        # =================================================================
+
         # RUN MAIN CRAWL ENGINE IF NEEDED
         if (
             forceOnlineCrawl
