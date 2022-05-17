@@ -11,14 +11,16 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     import crawlweb_free_proxy_cz
     import crawlweb_freeproxy_world
     import crawlweb_good_proxies_ru
-    import crawlweb_proxy_nova_com
     import crawlweb_online_proxy_ru
     import crawlweb_premproxy_com
+    import crawlweb_proxy_nova_com
     import crawlweb_proxy_tools_com
     import crawlweb_proxydb_net
+    import crawlweb_proxydocker_com
     import crawlweb_proxyranker_com
     import crawlweb_proxyscan_io
     import crawlweb_proxyscrape_com
+    import crawlweb_socks_proxy_net
     import crawlweb_spys_one
     import crawlweb_spyss_me
 
@@ -34,34 +36,29 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
         res = set()
         futures = [
-            # executor.submit( parce_free_proxy_cz.free_proxy_cz ), # bans a lot
+            executor.submit(crawlweb_free_proxy_cz.free_proxy_cz),  # bans a lot
             executor.submit(crawlweb_freeproxy_world.freeproxy_world),
-            executor.submit(
-                crawlweb_proxy_tools_com.proxy_tools_com, minimized=False
-            ),  # captcha
             executor.submit(crawlweb_good_proxies_ru.good_proxies_ru, country="ru"),
-            executor.submit(crawlweb_proxy_nova_com.proxy_nova_com),
             executor.submit(crawlweb_online_proxy_ru.online_proxy_ru),
             executor.submit(crawlweb_premproxy_com.premproxy_com),
+            executor.submit(crawlweb_proxy_nova_com.proxy_nova_com),
+            executor.submit(crawlweb_proxy_tools_com.proxy_tools_com),  # captcha
+            executor.submit(crawlweb_proxydb_net.proxydb_net),  # captcha
+            executor.submit(crawlweb_proxydocker_com.proxydocker_com),
             executor.submit(crawlweb_proxyranker_com.proxyranker_com),
             executor.submit(crawlweb_proxyscan_io.proxyscan_io, country="ru"),
             executor.submit(crawlweb_proxyscrape_com.proxyscrape_com),
-            executor.submit(
-                crawlweb_spys_one.spys_one, minimized=False
-            ),  # minimized windows hides data
+            executor.submit(crawlweb_socks_proxy_net.socks_proxy_net),
+            executor.submit(crawlweb_spys_one.spys_one),  # minimized windows hides data
             executor.submit(crawlweb_spyss_me.spyss_github, country="RU"),
-            executor.submit(
-                crawlweb_proxydb_net.proxydb_net, minimized=False
-            ),  # captcha
             ##################### PARCE PROXY TYPES !! #######################
-            # https://www.socks-proxy.net/ "Russian Federation"
-            # https://freeproxylist.cc/online/Russia/
             # https://www.proxydocker.com/en/proxylist/country/Russia
             # https://www.proxyhub.me/en/ru-free-proxy-list.html
             # https://premiumproxy.net/top-country-proxy-list/RU-Russia
             # https://geonode.com/free-proxy-list/
             # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
             # https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1
+            # https://freeproxylist.cc/online/Russia/ ## NAH - no ssl search, no protocol
         ]
         for future in concurrent.futures.as_completed(futures):
             queue_proxies.update(future.result() if future.result() else set())

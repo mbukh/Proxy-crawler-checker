@@ -17,6 +17,7 @@ def detect_proxies_type(
     # =============================
     TMOUT = 7
     CHECK_URLS_COUNT = 8
+    SUCCESS_TIMES = 1
 
     export_proxies = set()
     anonym_proxies = set()
@@ -146,7 +147,7 @@ def detect_proxies_type(
                             )
                             # print("TEXT: ", reqResponce.text.replace("\n","").replace("\t"," ").replace("  ",""))
                         successCount += 1
-                        if successCount >= 2:
+                        if successCount >= SUCCESS_TIMES:
                             return protocol[
                                 list(protocol)[0]
                             ]  # FIRST ELEMENT VALUE IN DICT

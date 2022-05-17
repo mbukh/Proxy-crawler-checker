@@ -7,27 +7,28 @@ def spyss_github(country: str = "RU") -> set:
     export_proxies = set()
 
     urls = [
-        "https://spys.me/proxy.txt",
-        "https://spys.me/socks.txt",
+        ("all", "https://spys.me/socks.txt"),
+        ("all", "https://spys.me/proxy.txt"),
     ]
 
-    data = set()
-
-    for url in urls:
+    for proxy_type, url in urls:
         try:
             resp = requests.get(url, timeout=TMOUT)
             if resp.status_code == 200:
-                data.update(resp.text.split("\n"))
+                export_proxies.update(
+                    [
+                        x.split()[0]
+                        for x in resp.text.split("\n")
+                        if (x.find(country.upper()) != -1)
+                        # and (x.find("-S") != -1) / SSL SUPPORT ONLY
+                    ]
+                )
             else:
                 print(SERVICE_NAME, "url responce error", url)
         except:
             print(SERVICE_NAME, "Can't connect to the server.")
             return None
         sleep(5)
-
-    export_proxies = set(
-        [x.split()[0] for x in data if (x.find(country.upper()) != -1)]
-    )  #  and (x.find("-S") != -1) / SSL SUPPORT ONLY
 
     print(SERVICE_NAME, len(export_proxies))
     return export_proxies

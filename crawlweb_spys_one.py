@@ -1,4 +1,4 @@
-def spys_one(minimized: bool = False, showBrowser: bool = True) -> set:
+def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait, Select
     from selenium.webdriver.support import expected_conditions as EC
@@ -11,15 +11,23 @@ def spys_one(minimized: bool = False, showBrowser: bool = True) -> set:
     import logging
 
     SERVICE_NAME = "Spys.one:"
-    TMOUT = 30
+    TMOUT = 20
     export_proxies = set()
 
-    url = "https://spys.one/en/"
+    urls = [
+        ("all", "https://spys.one/en/"),
+    ]
 
     options = Options()
-    options.headless = not showBrowser
-    options.add_argument("--window-size=1024,400")
-    options.add_argument("--window-position=500,500")
+    options.headless = hideBrowser
+    options.add_argument("--window-position=400,500")
+    options.add_argument("--window-size=1200,500")
+
+    options.add_argument("--disable-gpu")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     try:
         driver = webdriver.Chrome(
             service=Service(
@@ -30,87 +38,99 @@ def spys_one(minimized: bool = False, showBrowser: bool = True) -> set:
             options=options,
         )
     except:
-        print(SERVICE_NAME, "Can't connect to the server.")
+        print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
     if minimized:
         driver.minimize_window()  # if no user interaction needed, but browser must be open
 
-    try:
-        driver.set_page_load_timeout(TMOUT)
-        driver.get(url)
-    except:
-        print(SERVICE_NAME, "Can't connect to a page ", url)
-        return None
+    for proxy_type, url in urls:
+        try:
+            # EXPLICIT WAIT
+            w = WebDriverWait(driver, TMOUT)
+            # LAUNCH URL
+            driver.get(url)
+            # EXPECTED CONDITION
+            w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
+            driver.execute_script("window.stop();")
+        except:
+            print(SERVICE_NAME, "Timeout connect to a page", url)
 
-    # get ANM + HIA RU proxies -> proceed to page
-    try:
-        show_more = WebDriverWait(driver, TMOUT).until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH,
-                    "//table[2]/tbody/tr[4]/td/table/tbody/tr/td/table[1]/tbody/tr[3]/td/table",
+        # GET ANM + HIA RU PROXIES -> PROCEED TO PAGE
+        try:
+            country_select = driver.find_element(
+                by=By.XPATH, value='//select[@id="tldc"]'
+            )
+            country_select = Select(country_select)
+            country_select.select_by_value("191")  # Russia
+            sleep(1)
+            anon_select = driver.find_element(by=By.XPATH, value='//select[@id="anmm"]')
+            anon_select = Select(anon_select)
+            anon_select.select_by_value("1")  # ANM + HIA
+            sleep(2)
+            submit_input = driver.find_element(
+                by=By.XPATH,
+                value='//input[contains(@class,"spy8") and contains(@type,"submit")]',
+            )
+            submit_input.click()
+            sleep(3)
+        except:
+            print(SERVICE_NAME, "Home page changed, can't proceed.")
+            return None
+
+        # IF AD POPUP SHOWS -> CLOSE
+        try:
+            close_ad = WebDriverWait(driver, TMOUT).until(
+                EC.presence_of_element_located((By.ID, "dismiss-button"))
+            )
+            actions = ActionChains(driver)
+            actions.move_to_element(close_ad)
+            actions.click(close_ad)
+            actions.perform()
+            sleep(3)
+        except:
+            pass
+
+        # PARCE WHAT YOU GET
+        try:
+            table_proxy = WebDriverWait(driver, TMOUT).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//table[2]/tbody/tr[4]/td/table/tbody/tr[4]")
                 )
             )
-        )
-        country_select = driver.find_element(by=By.XPATH, value='//select[@id="tldc"]')
-        country_select = Select(country_select)
-        country_select.select_by_value("191")  # Russia
-        sleep(1)
-        anon_select = driver.find_element(by=By.XPATH, value='//select[@id="anmm"]')
-        anon_select = Select(anon_select)
-        anon_select.select_by_value("1")  # ANM + HIA
-        sleep(2)
-        submit_input = driver.find_element(
-            by=By.XPATH,
-            value='//input[contains(@class,"spy8") and contains(@type,"submit")]',
-        )
-        submit_input.click()
-        sleep(3)
-    except:
-        print(SERVICE_NAME, "Home page changed, can't proceed.")
-        return None
+        except:
+            print(SERVICE_NAME, "Page changed, data not found on page.")
+            return None
 
-    # if ad popup shows -> close
-    try:
-        close_ad = WebDriverWait(driver, TMOUT).until(
-            EC.presence_of_element_located((By.ID, "dismiss-button"))
-        )
-        actions = ActionChains(driver)
-        actions.move_to_element(close_ad)
-        actions.click(close_ad)
-        actions.perform()
-        sleep(3)
-    except:
-        pass
-
-    # parce what you get
-    try:
-        table_proxy = WebDriverWait(driver, TMOUT).until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//table[2]/tbody/tr[4]/td/table/tbody/tr[4]")
-            )
-        )
         rows_count = len(
             driver.find_elements(
                 by=By.XPATH, value="//table[2]/tbody/tr[4]/td/table/tbody/tr"
             )
         )
-    except:
-        print(SERVICE_NAME, "Page changed, data not found on page.")
-        return None
-
-    for row_num in range(3, rows_count - 1):
-        try:
-            ip_port = driver.find_element(
-                by=By.XPATH,
-                value="//table[2]/tbody/tr[4]/td/table/tbody/tr["
-                + str(row_num + 1)
-                + "]/td[1]",
-            )
-            export_proxies.add(ip_port.text)
-        except:
+        if rows_count == 0:
+            # print(SERVICE_NAME, "Page changed, data not found on page.")
             continue
+
+        for row_num in range(3, rows_count - 1):
+            try:
+                ip_port = driver.find_element(
+                    by=By.XPATH,
+                    value="//table[2]/tbody/tr[4]/td/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[1]",
+                )
+                protocol = driver.find_element(
+                    by=By.XPATH,
+                    value="//table[2]/tbody/tr[4]/td/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[2]",
+                )
+                export_proxies.add(
+                    protocol.text.split()[0].lower() + "://" + ip_port.text
+                )
+            except:
+                continue
 
     driver.quit()
 

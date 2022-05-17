@@ -1,4 +1,4 @@
-def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
+def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -10,15 +10,12 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
     from time import sleep
     import logging
 
-    SERVICE_NAME = "Free-proxy.cz:"
-    TMOUT = 30
+    SERVICE_NAME = "Proxydocker.com:"
+    TMOUT = 20
     export_proxies = set()
 
     urls = [  # pages
-        ("https", "http://free-proxy.cz/en/proxylist/country/RU/https/ping/level1"),
-        ("https", "http://free-proxy.cz/en/proxylist/country/RU/https/ping/level2"),
-        ("allsocks", "http://free-proxy.cz/en/proxylist/country/RU/socks/ping/level1"),
-        ("allsocks", "http://free-proxy.cz/en/proxylist/country/RU/socks/ping/level2"),
+        ("all", "https://www.proxydocker.com/en/proxylist/country/Russia"),
     ]
 
     options = Options()
@@ -52,11 +49,7 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
             # LAUNCH URL
             driver.get(url)
             # EXPECTED CONDITION
-            w.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, '//table[@id="proxy_list"]/tbody/tr')
-                )
-            )
+            w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
         except:
@@ -70,12 +63,12 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
                     EC.presence_of_element_located((By.TAG_NAME, "body"))
                 )
             except:
-                print(SERVICE_NAME, "Timeout connect to a page", url)
+                # print(SERVICE_NAME, "Timeout connect to a page", url)
                 return export_proxies
 
             rows_count = len(
                 driver.find_elements(
-                    by=By.XPATH, value='//table[@id="proxy_list"]/tbody/tr'
+                    by=By.XPATH, value='//div[@id="proxylist"]/table/tbody/tr'
                 )
             )
             if rows_count == 0:
@@ -84,27 +77,19 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
 
             for row_num in range(rows_count):
                 try:
-                    ip = driver.find_element(
+                    ip_port = driver.find_element(
                         by=By.XPATH,
-                        value='//table[@id="proxy_list"]/tbody/tr['
+                        value='//div[@id="proxylist"]/table/tbody/tr['
                         + str(row_num + 1)
                         + "]/td[1]",
                     )
-                    port = driver.find_element(
+                    protocol = driver.find_element(
                         by=By.XPATH,
-                        value='//table[@id="proxy_list"]/tbody/tr['
+                        value='//div[@id="proxylist"]/table/tbody/tr['
                         + str(row_num + 1)
                         + "]/td[2]",
                     )
-                    protocol = driver.find_element(
-                        by=By.XPATH,
-                        value='//table[@id="proxy_list"]/tbody/tr['
-                        + str(row_num + 1)
-                        + "]/td[3]",
-                    )
-                    export_proxies.add(
-                        protocol.text.lower() + "://" + ip.text + ":" + port.text
-                    )
+                    export_proxies.add(protocol.text.lower() + "://" + ip_port.text)
                 except:
                     continue
 
@@ -112,7 +97,7 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
             try:
                 next_page = WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located(
-                        (By.XPATH, "//div[@class='paginator']/a[contains(.,'Next')]")
+                        (By.XPATH, '//*[@id="nextbtn"]/a[contains(.,"Next")]')
                     )
                 )
                 # PAUSE BETWEEN PAGES, TIME TO LOAD
@@ -135,4 +120,4 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(free_proxy_cz())
+    print(proxydocker_com())

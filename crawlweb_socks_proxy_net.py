@@ -1,4 +1,4 @@
-def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
+def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -9,17 +9,16 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     from time import sleep
     import logging
 
-    SERVICE_NAME = "Proxyranker.com:"
+    SERVICE_NAME = "Socks-proxy.net:"
     TMOUT = 20
     export_proxies = set()
 
     urls = [
-        ("all", "https://proxyranker.com/russian_federation/"),
-        ("all", "https://proxyranker.com/russian_federation/list/"),
+        ("all", "https://www.socks-proxy.net/"),
     ]
 
     options = Options()
-    options.headless = True
+    options.headless = hideBrowser
     options.add_argument("--window-size=1400,900")
     options.add_argument("--disable-gpu")
     options.add_argument("--ignore-certificate-errors")
@@ -39,6 +38,9 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
+    if minimized:
+        driver.minimize_window()  # if no user interaction needed, but browser must be open
+
     for proxy_type, url in urls:
         try:
             # EXPLICIT WAIT
@@ -51,30 +53,53 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
             driver.execute_script("window.stop();")
         except:
             print(SERVICE_NAME, "Timeout connect to a page", url)
+            return export_proxies
 
         rows_count = len(
             driver.find_elements(
-                by=By.XPATH, value="//div[@class='data']/table/tbody/tr"
+                by=By.XPATH,
+                value="//div[@class='table-responsive']/div[@class='table-responsive fpl-list']/table/tbody/tr",
             )
         )
+        if rows_count == 0:
+            print(SERVICE_NAME, "Page changed, data not found on page.")
+            continue
 
         for row_num in range(rows_count):
             try:
+                country = driver.find_element(
+                    by=By.XPATH,
+                    value="//div[@class='table-responsive']/div[@class='table-responsive fpl-list']/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[4]",
+                )
+                if not "Russian" in country.text:
+                    continue
                 ip = driver.find_element(
                     by=By.XPATH,
-                    value="//div[@class='data']/table/tbody/tr["
+                    value="//div[@class='table-responsive']/div[@class='table-responsive fpl-list']/table/tbody/tr["
                     + str(row_num + 1)
                     + "]/td[1]",
                 )
                 port = driver.find_element(
                     by=By.XPATH,
-                    value="//div[@class='data']/table/tbody/tr["
+                    value="//div[@class='table-responsive']/div[@class='table-responsive fpl-list']/table/tbody/tr["
                     + str(row_num + 1)
-                    + "]/td[4]",
+                    + "]/td[2]",
                 )
-                export_proxies.add(ip.text + ":" + port.text)
+                protocol = driver.find_element(
+                    by=By.XPATH,
+                    value="//div[@class='table-responsive']/div[@class='table-responsive fpl-list']/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[5]",
+                )
+                export_proxies.add(
+                    protocol.text.lower() + "://" + ip.text + ":" + port.text
+                )
             except:
-                continue
+                # print(SERVICE_NAME, "Content changed", url)
+                break
+
         sleep(5)
 
     driver.quit()
@@ -84,4 +109,4 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(proxyranker_com())
+    print(socks_proxy_net())

@@ -107,6 +107,7 @@ def main(force_online_crawl: bool = False) -> int:
                     existing_proxies=queue_proxies
                 )
             )
+            force_online_crawl = False
         else:
             print("\n[CRAWLING] No need for online crawling.")
         # ===============================

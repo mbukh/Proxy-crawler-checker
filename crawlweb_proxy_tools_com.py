@@ -1,4 +1,4 @@
-def proxy_tools_com(minimized: bool = False, showBrowser: bool = True) -> set:
+def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -14,12 +14,20 @@ def proxy_tools_com(minimized: bool = False, showBrowser: bool = True) -> set:
     TMOUT = 30
     export_proxies = set()
 
-    url = "https://proxy-tools.com/proxy/ru"
+    urls = [
+        ("all", "https://proxy-tools.com/proxy/ru"),
+    ]
 
     options = Options()
-    options.headless = not showBrowser
+    options.headless = hideBrowser
     options.add_argument("--window-position=1200,100")
     options.add_argument("--window-size=1024,768")
+
+    options.add_argument("--disable-gpu")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     try:
         driver = webdriver.Chrome(
             service=Service(
@@ -30,75 +38,84 @@ def proxy_tools_com(minimized: bool = False, showBrowser: bool = True) -> set:
             options=options,
         )
     except:
-        print(SERVICE_NAME, "Can't connect to the server.")
+        print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
     if minimized:
         driver.minimize_window()  # if no user interaction needed, but browser must be open
 
-    try:
-        driver.set_page_load_timeout(TMOUT)
-        driver.get(url)
-    except:
-        print(SERVICE_NAME, "Can't connect to a page ", url)
-        return None
-
-        # ADD PAGING !!
-
-    # if captcha exists - pass it
-    max_tries = 1
-    tried = 0
-    while True:
+    for proxy_type, url in urls:
         try:
-            request_ports = WebDriverWait(driver, TMOUT).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, "//*[@id='ct-main']/main/table/tbody/tr[1]/td[2]/a")
-                )
-            )
-            actions = ActionChains(driver)
-            actions.move_to_element(request_ports)
-            actions.click(request_ports)
-            actions.perform()
-            sleep(20)
-            if tried == max_tries:
-                print(SERVICE_NAME, "captcha needed.")
-                return None
-            tried += 1
+            # EXPLICIT WAIT
+            w = WebDriverWait(driver, TMOUT)
+            # LAUNCH URL
+            driver.get(url)
+            # EXPECTED CONDITION
+            w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
+            driver.execute_script("window.stop();")
         except:
-            break
+            print(SERVICE_NAME, "Timeout connect to a page", url)
 
-    try:
-        table_proxy = WebDriverWait(driver, TMOUT).until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//div[@id='ct-main']/main/table/tbody/tr")
-            )
-        )
+            # ADD PAGING !!
+
+        # IF CAPTCHA EXISTS - PASS IT
+        MAX_TRIES = 2
+        tried = 0
+        while True:
+            try:
+                request_ports = WebDriverWait(driver, 1).until(
+                    EC.presence_of_element_located(
+                        (By.XPATH, "//*[@id='ct-main']/main/table/tbody/tr[1]/td[2]/a")
+                    )
+                )
+                actions = ActionChains(driver)
+                actions.move_to_element(request_ports)
+                actions.click(request_ports)
+                actions.perform()
+                # WAITING FOR A USER TO PASS CAPTCHA
+                sleep(TMOUT)
+                if tried >= MAX_TRIES:
+                    print(SERVICE_NAME, "Captcha not passed.")
+                    return None
+                tried += 1
+            except:
+                break
+
         rows_count = len(
             driver.find_elements(
                 by=By.XPATH, value="//div[@id='ct-main']/main/table/tbody/tr"
             )
         )
-    except:
-        print(SERVICE_NAME, "Page changed, data not found on page.")
-        return None
-
-    for row_num in range(rows_count):
-        try:
-            ip = driver.find_element(
-                by=By.XPATH,
-                value="//*[@id='ct-main']/main/table/tbody/tr["
-                + str(row_num + 1)
-                + "]/td[1]",
-            )
-            port = driver.find_element(
-                by=By.XPATH,
-                value="//*[@id='ct-main']/main/table/tbody/tr["
-                + str(row_num + 1)
-                + "]/td[2]",
-            )
-            export_proxies.add(ip.text + ":" + port.text)
-        except:
+        if rows_count == 0:
+            # print(SERVICE_NAME, "Page changed, data not found on page.")
             continue
+
+        for row_num in range(rows_count):
+            try:
+                ip = driver.find_element(
+                    by=By.XPATH,
+                    value="//*[@id='ct-main']/main/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[1]",
+                )
+                port = driver.find_element(
+                    by=By.XPATH,
+                    value="//*[@id='ct-main']/main/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[2]",
+                )
+                protocol = driver.find_element(
+                    by=By.XPATH,
+                    value="//*[@id='ct-main']/main/table/tbody/tr["
+                    + str(row_num + 1)
+                    + "]/td[3]",
+                )
+                export_proxies.add(
+                    protocol.text.lower() + "://" + ip.text + ":" + port.text
+                )
+            except:
+                continue
 
     driver.quit()
 

@@ -1,5 +1,4 @@
-def freeproxy_world() -> set:
-    from time import sleep
+def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -7,6 +6,7 @@ def freeproxy_world() -> set:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
     from webdriver_manager.chrome import ChromeDriverManager
+    from time import sleep
     import logging
 
     SERVICE_NAME = "Freeproxy.world:"
@@ -14,13 +14,28 @@ def freeproxy_world() -> set:
     export_proxies = set()
 
     urls = [
-        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=1",
-        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=2",
-        "https://www.freeproxy.world/?type=&anonymity=&country=RU&speed=&port=&page=3",
+        (
+            "socks4",
+            "https://www.freeproxy.world/?type=socks4&anonymity=&country=RU&speed=&port=&page=1",
+        ),
+        (
+            "socks5",
+            "https://www.freeproxy.world/?type=socks5&anonymity=&country=RU&speed=&port=&page=1",
+        ),
+        (
+            "https",
+            "https://www.freeproxy.world/?type=https&anonymity=&country=RU&speed=&port=&page=1",
+        ),
     ]
 
     options = Options()
     options.headless = True
+    options.add_argument("--window-size=1400,900")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     try:
         driver = webdriver.Chrome(
             service=Service(
@@ -31,29 +46,30 @@ def freeproxy_world() -> set:
             options=options,
         )
     except:
+        print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
-    for url in urls:
+    for proxy_type, url in urls:
         try:
-            driver.set_page_load_timeout(TMOUT)
+            # EXPLICIT WAIT
+            w = WebDriverWait(driver, TMOUT)
+            # LAUNCH URL
             driver.get(url)
+            # EXPECTED CONDITION
+            w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+            # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
+            driver.execute_script("window.stop();")
         except:
-            print(SERVICE_NAME, "Can't connect to a page", url)
+            print(SERVICE_NAME, "Timeout connect to a page", url)
 
-        try:
-            table_proxy = WebDriverWait(driver, TMOUT).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, "//table[@class='layui-table']")
-                )
+        rows_count = len(
+            driver.find_elements(
+                by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"
             )
-            rows_count = len(
-                driver.find_elements(
-                    by=By.XPATH, value="//table[@class='layui-table']/tbody[1]/tr"
-                )
-            )
-        except:
-            print(SERVICE_NAME, "Page changed, data not found on page.")
-            return None
+        )
+        if rows_count == 0:
+            # print(SERVICE_NAME, "Page changed, data not found on page.")
+            continue
 
         for row_num in range(2, rows_count):
             try:
@@ -69,7 +85,13 @@ def freeproxy_world() -> set:
                     + str(row_num + 1)
                     + "]/td[2]",
                 )
-                export_proxies.add(ip.text + ":" + port.text)
+                protocol = driver.find_element(
+                    by=By.XPATH,
+                    value="//table[@class='layui-table']/tbody[1]/tr["
+                    + str(row_num + 1)
+                    + "]/td[6]",
+                )
+                export_proxies.add(protocol.text + "://" + ip.text + ":" + port.text)
             except:
                 continue
         sleep(5)
