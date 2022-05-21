@@ -1,6 +1,3 @@
-from turtle import update
-
-
 def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # BUILT-INS
     import concurrent.futures  # multithreading
@@ -27,7 +24,8 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     # ==============
 
     # CREATE A SET OF ALWAYS UNIQUE PROXIES
-    queue_proxies = set()
+    export_proxies = set()
+    parced_proxies = set()
     # =====================================
     oldLen = len(existing_proxies)
 
@@ -60,22 +58,27 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
             # https://premiumproxy.net/top-country-proxy-list/RU-Russia ## COPY OF spys_one
         ]
         for future in concurrent.futures.as_completed(futures):
-            queue_proxies.update(future.result() if future.result() else set())
+            parced_proxies.update(future.result() if future.result() else set())
     # ====================================
 
-    # REMOVE EXISTING PROXIES WITHOUT TYPE://
-    queue_proxies.difference_update([x.split("://")[-1] for x in existing_proxies])
+    export_proxies.update(parced_proxies, existing_proxies)
 
-    # RETURN EXISTING PROXIES CONTAITING TYPE://
-    queue_proxies.update(existing_proxies)
+    # REMOVE DUBLICATES PROXIES WITHOUT TYPE://
+    # TWO TYPES OF PROXY: WITHOUT AND WITH TYPE TYPE://IP_ADDR:PORT
+    detected_proxies = [
+        proxy.split("://")[-1] for proxy in export_proxies if "://" in proxy
+    ]
+    export_proxies = export_proxies - set(detected_proxies)
+    # =================
 
-    if len(queue_proxies):
-        print("\nParced", len(queue_proxies), "unique proxies.")
-        print("Added", len(queue_proxies) - oldLen, "new unique proxies.\n")
+    print("\nParced", len(parced_proxies), "proxies.")
+    print("Added", len(export_proxies) - oldLen, "new unique proxies.")
 
-    return queue_proxies
+    return export_proxies
 
 
 if __name__ == "__main__":
     proxies = []
-    print(crawl_online_proxy_services(existing_proxies=proxies))
+    print(
+        crawl_online_proxy_services(existing_proxies=proxies),
+    )
