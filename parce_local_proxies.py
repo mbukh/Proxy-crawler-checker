@@ -1,6 +1,6 @@
 def get_proxies_from_file(filename: str = "proxies_.txt") -> set():
     queue_proxies = set()
-    print("\nReading from", filename)
+    print("Reading from", filename)
     try:
         # WORK DIR SET EARLIER TO SCRIPT DIR
         txt_file = open(filename, "r")

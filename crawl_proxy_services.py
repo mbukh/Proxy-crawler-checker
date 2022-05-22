@@ -33,7 +33,7 @@ def crawl_online_proxy_services(
     oldLen = len(existing_proxies)
 
     # STAR PARCING SOURCES IN MULTITHREADING
-    print("\nParcing websites...\n")
+    print("\n[Parcing websites...]")
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         res = set()
         futures = [
@@ -78,8 +78,8 @@ def crawl_online_proxy_services(
 
     print("Parced", len(parced_proxies), "proxies.")
 
-    print("\nAdded", len(export_proxies) - oldLen, "new unique proxies.")
-    print("Total:", len(export_proxies), "unique proxies.")
+    print("Added", len(export_proxies) - oldLen, "new unique proxies.")
+    print("\n[Total]", len(export_proxies), "unique proxies.")
 
     # SAVE ALL PARCED PROXIES TO QUEUE FILE
     # WORK DIR SET EARLIER TO SCRIPT DIR

@@ -19,6 +19,19 @@ def gather_queue_proxies(
     manual_proxies = []
     # =========================
 
+    def remove_duplicates(queue_proxies: list = []):
+        export_proxies = set(queue_proxies)
+        # REMOVE DUBLICATES PROXIES WITHOUT TYPE://
+        # TWO TYPES OF PROXY: WITHOUT AND WITH TYPE TYPE://IP_ADDR:PORT
+        detected_proxies = [
+            proxy.split("://")[-1] for proxy in queue_proxies if "://" in proxy
+        ]
+        export_proxies.difference_update(detected_proxies)
+        return export_proxies
+        # =================
+
+    print("\n[Local files proxies gathering...]")
+
     # COLLECT PROXIES HISTORY FOR FUTURE RECHECK / WORK DIR SET EARLIER TO SCRIPT DIR
     if collect_queue_history:
         oldLen = len(queue_proxies)
@@ -26,7 +39,8 @@ def gather_queue_proxies(
             filename="proxies_queue_unchecked.txt",
         )
         queue_proxies.update(queue_history_proxies)
-        print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
+        queue_proxies = remove_duplicates(queue_proxies)
+        print("Added", len(queue_proxies) - oldLen, "proxies from an unchecked queue.")
     # ===============================================================================
     # OLD PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if collect_checked_proxies:
@@ -35,7 +49,12 @@ def gather_queue_proxies(
             filename="proxies_.txt",
         )
         queue_proxies.update(old_proxies)
-        print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
+        queue_proxies = remove_duplicates(queue_proxies)
+        print(
+            "Updated existing proxies and added",
+            str(len(queue_proxies) - oldLen),
+            "unique new proxies.",
+        )
     # ================================================
     # MANUAL PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if scan_manual_proxies:
@@ -44,16 +63,9 @@ def gather_queue_proxies(
             filename="proxies_manual_queue.txt",
         )
         queue_proxies.update(manual_proxies)
+        queue_proxies = remove_duplicates(queue_proxies)
         print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
     # ===================================================
-
-    # REMOVE DUBLICATES PROXIES WITHOUT TYPE://
-    # TWO TYPES OF PROXY: WITHOUT AND WITH TYPE TYPE://IP_ADDR:PORT
-    detected_proxies = [
-        proxy.split("://")[-1] for proxy in queue_proxies if "://" in proxy
-    ]
-    queue_proxies.difference_update(detected_proxies)
-    # =================
 
     # SAVE ALL PARCED PROXIES TO QUEUE FILE
     # WORK DIR SET EARLIER TO SCRIPT DIR
@@ -69,6 +81,8 @@ def gather_queue_proxies(
             with open("proxies_queue_unchecked.txt", "w") as f:
                 f.writelines("\n".join(queue_proxies))
     # ====================================
+
+    print("\n[Total]", len(queue_proxies), "unique proxies.")
 
     return queue_proxies
 
