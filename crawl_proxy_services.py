@@ -79,7 +79,7 @@ def crawl_online_proxy_services(
     print("Parced", len(parced_proxies), "proxies.")
 
     print("Added", len(export_proxies) - oldLen, "new unique proxies.")
-    print("\n[Total]", len(export_proxies), "unique proxies.")
+    print("[Total]", len(export_proxies), "unique proxies.")
 
     # SAVE ALL PARCED PROXIES TO QUEUE FILE
     # WORK DIR SET EARLIER TO SCRIPT DIR

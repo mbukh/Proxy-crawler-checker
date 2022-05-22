@@ -51,7 +51,7 @@ def gather_queue_proxies(
         queue_proxies.update(old_proxies)
         queue_proxies = remove_duplicates(queue_proxies)
         print(
-            "Updated existing proxies and added",
+            "Updated type to existing proxies. Added",
             str(len(queue_proxies) - oldLen),
             "unique new proxies.",
         )
@@ -82,7 +82,7 @@ def gather_queue_proxies(
                 f.writelines("\n".join(queue_proxies))
     # ====================================
 
-    print("\n[Total]", len(queue_proxies), "unique proxies.")
+    print("[Total]", len(queue_proxies), "local unique proxies.")
 
     return queue_proxies
 
