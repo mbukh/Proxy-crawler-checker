@@ -133,9 +133,12 @@ def main(force_online_crawl: bool = False) -> int:
         if set_proxies:
             # SAVE VALIDATED PROXIES TO FILE
             # WORK DIR SET EARLIER TO SCRIPT DIR
-            print("\nWriting proxies_.txt")
-            with open("proxies_.txt", "w") as f:
-                f.writelines("\n".join(set_proxies))
+            try:
+                with open("proxies_.txt", "w") as f:
+                    f.writelines("\n".join(set_proxies))
+                print("\nWriting", len(set_proxies), "working proxies to proxies_.txt")
+            except Exception as e:
+                print("Couldn't write to proxies_.txt", e)
             # ==============================
 
             # REPLACE FILE TO MAKE MACOS RELOAD LIBERATOR (WATCH FOLDERS SCRIPT MACOS)
@@ -157,8 +160,6 @@ def main(force_online_crawl: bool = False) -> int:
                     e,
                 )
             # ========================================================================
-
-            print("\n", len(set_proxies), "working proxies remained and saved.\n")
         else:
             print("No proxy was detected.")
 
@@ -168,6 +169,7 @@ def main(force_online_crawl: bool = False) -> int:
         else:
             forceOnlineCrawl = False
 
+        # END ROUTINE MESSAGE
         print(
             "[",
             datetime.now(),
@@ -177,6 +179,7 @@ def main(force_online_crawl: bool = False) -> int:
             "time" if countRoutines == 1 else "times",
             "\n",
         )
+        # ===================
 
         if len(set_proxies) >= MINIMUM_PROXY_FOR_RECHECK:
             # WAITING TIME WITH PROGRESS BAR <- RECHECK_EVERY_MINS
