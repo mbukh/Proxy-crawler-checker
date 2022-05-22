@@ -1,9 +1,9 @@
 def gather_queue_proxies(
     current_queue: list = [],
-    scan_manual_proxies: bool = True,
-    rescan_old_proxies: bool = True,
     collect_queue_history: bool = True,
-    save_queue_file: bool = True,
+    collect_checked_proxies: bool = True,
+    scan_manual_proxies: bool = True,
+    save_queue_file: bool = False,
 ) -> set:
     # CRAWLING LOCAL FILES MODULE
     import parce_local_proxies
@@ -29,7 +29,7 @@ def gather_queue_proxies(
         print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
     # ===============================================================================
     # OLD PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
-    if rescan_old_proxies:
+    if collect_checked_proxies:
         oldLen = len(queue_proxies)
         old_proxies = parce_local_proxies.get_proxies_from_file(
             filename="proxies_.txt",
@@ -52,7 +52,7 @@ def gather_queue_proxies(
     detected_proxies = [
         proxy.split("://")[-1] for proxy in queue_proxies if "://" in proxy
     ]
-    queue_proxies = queue_proxies - set(detected_proxies)
+    queue_proxies.difference_update(detected_proxies)
     # =================
 
     # SAVE ALL PARCED PROXIES TO QUEUE FILE

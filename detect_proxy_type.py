@@ -182,10 +182,13 @@ def detect_proxies_type(
     # hosts_list not set ot empty
     if not queue_proxies:
         try:
-            import parce_local_proxies
+            import gather_queue_proxies
 
-            queue_proxies = parce_local_proxies.get_proxies_from_file(
-                "proxies_queue_unchecked.txt"
+            queue_proxies = gather_queue_proxies.gather_queue_proxies(
+                scan_manual_proxies=True,
+                collect_checked_proxies=False,
+                collect_queue_history=False,
+                save_queue_file=False,
             )
         except:
             return None
@@ -204,13 +207,17 @@ def detect_proxies_type(
                 # progress bar update
                 pbar.update()
 
-    export_proxies = set([x for x in res if x])  # remove empty
-
     # save anonymous proxy list
     if save_anonymous and anonym_proxies:
         print("Writing proxy_anonymous.txt", len(anonym_proxies), "proxies")
         with open("proxy_anonymous.txt", "w") as f:
             f.writelines("\n".join(anonym_proxies))
+
+    export_proxies.update(res)
+
+    # REMOVE EMPTY. NO DUPLICATES IN SET AFTER CHECKING TYPE
+    export_proxies = [proxy for proxy in export_proxies if proxy]
+    # ======================================================
 
     print(
         "Working proxies",
@@ -224,11 +231,12 @@ def detect_proxies_type(
 
 
 if __name__ == "__main__":
-    txt_file = open("proxies_manual_queue.txt", "r")
-    queue_proxies = txt_file.read().splitlines()  # last element not \n
-    queue_proxies = [x for x in queue_proxies if ":" in x]
+    proxies = []
     print(
         detect_proxies_type(
-            queue_proxies=queue_proxies, save_anonymous=False, debug=False
+            queue_proxies=proxies,
+            save_anonymous=False,
+            debug=False,
+            concurrect_checks=35,
         )
     )

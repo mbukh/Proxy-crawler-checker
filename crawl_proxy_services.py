@@ -1,4 +1,6 @@
-def crawl_online_proxy_services(existing_proxies: list = []) -> set:
+def crawl_online_proxy_services(
+    existing_proxies: list = [], save_queue_file: bool = False
+) -> set:
     # BUILT-INS
     import concurrent.futures  # multithreading
 
@@ -17,6 +19,7 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
     import crawlweb_proxyranker_com
     import crawlweb_proxyscan_io
     import crawlweb_proxyscrape_com
+    import crawlweb_proxyservers_pro
     import crawlweb_socks_proxy_net
     import crawlweb_spys_one
     import crawlweb_spyss_me
@@ -46,14 +49,15 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
             executor.submit(crawlweb_proxyranker_com.proxyranker_com),
             executor.submit(crawlweb_proxyscan_io.proxyscan_io, country="ru"),
             executor.submit(crawlweb_proxyscrape_com.proxyscrape_com),
+            executor.submit(crawlweb_proxyservers_pro.proxyservers_pro),
             executor.submit(crawlweb_socks_proxy_net.socks_proxy_net),
             executor.submit(crawlweb_spys_one.spys_one),  # minimized windows hides data
             executor.submit(crawlweb_spyss_me.spyss_github, country="RU"),
             ##################### PARCE PROXY TYPES !! #######################
-            # https://geonode.com/free-proxy-list/
-            # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
             # https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1
             # https://www.proxyhub.me/en/ru-free-proxy-list.html
+            # https://geonode.com/free-proxy-list/
+            # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
             # https://freeproxylist.cc/online/Russia/ ## NAH - no ssl search, no protocol
             # https://premiumproxy.net/top-country-proxy-list/RU-Russia ## COPY OF spys_one
         ]
@@ -61,18 +65,38 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
             parced_proxies.update(future.result() if future.result() else set())
     # ====================================
 
-    export_proxies.update(parced_proxies, existing_proxies)
+    export_proxies.update(parced_proxies)
+    export_proxies.update(existing_proxies)
 
     # REMOVE DUBLICATES PROXIES WITHOUT TYPE://
     # TWO TYPES OF PROXY: WITHOUT AND WITH TYPE TYPE://IP_ADDR:PORT
     detected_proxies = [
         proxy.split("://")[-1] for proxy in export_proxies if "://" in proxy
     ]
-    export_proxies = export_proxies - set(detected_proxies)
+    export_proxies.difference_update(detected_proxies)
     # =================
 
-    print("\nParced", len(parced_proxies), "proxies.")
-    print("Added", len(export_proxies) - oldLen, "new unique proxies.")
+    print("Parced", len(parced_proxies), "proxies.")
+
+    print("\nAdded", len(export_proxies) - oldLen, "new unique proxies.")
+    print("Total:", len(export_proxies), "unique proxies.")
+
+    # SAVE ALL PARCED PROXIES TO QUEUE FILE
+    # WORK DIR SET EARLIER TO SCRIPT DIR
+    # SKIP < IF NO NEW PROXIES WERE ADDED
+    if save_queue_file:
+        if len(export_proxies) > len(existing_proxies) and len(parced_proxies):
+            print(
+                "\nSaving queue, writing",
+                len(export_proxies),
+                "proxies to",
+                "proxies_queue_unchecked.txt",
+            )
+            with open("proxies_queue_unchecked.txt", "w") as f:
+                f.writelines("\n".join(export_proxies))
+        else:
+            print("No new proxies retrieved.")
+    # ====================================
 
     return export_proxies
 
@@ -80,5 +104,8 @@ def crawl_online_proxy_services(existing_proxies: list = []) -> set:
 if __name__ == "__main__":
     proxies = []
     print(
-        crawl_online_proxy_services(existing_proxies=proxies),
+        crawl_online_proxy_services(
+            existing_proxies=proxies,
+            save_queue_file=False,
+        ),
     )

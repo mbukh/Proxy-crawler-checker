@@ -89,9 +89,10 @@ def main(force_online_crawl: bool = False) -> int:
         queue_proxies.update(
             gather_queue_proxies.gather_queue_proxies(
                 current_queue=set_proxies,
-                scan_manual_proxies=is_ManualFileChanged,
-                rescan_old_proxies=True,
                 collect_queue_history=True,
+                scan_manual_proxies=is_ManualFileChanged,
+                collect_checked_proxies=True,
+                save_queue_file=False,
             )
         )
 
@@ -102,16 +103,10 @@ def main(force_online_crawl: bool = False) -> int:
         # =================================================================
 
         # RUN MAIN CRAWL ENGINE IF NEEDED
-        if (
-            forceOnlineCrawl
-            or len(set_proxies) < MINIMUM_PROXY_FOR_RECHECK
-            and CAN_ONLINE_CRAWL
-            and need_Online_Crawl
-        ):
-            queue_proxies.update(
-                crawl_proxy_services.crawl_online_proxy_services(
-                    existing_proxies=queue_proxies
-                )
+        if forceOnlineCrawl or CAN_ONLINE_CRAWL and need_Online_Crawl:
+            queue_proxies = crawl_proxy_services.crawl_online_proxy_services(
+                existing_proxies=queue_proxies,
+                save_queue_file=True,
             )
             force_online_crawl = False
         else:
