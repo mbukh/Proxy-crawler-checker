@@ -22,7 +22,7 @@ def get_proxies_country(hosts_list: list = [], country: str = "RU") -> set:
         try:
             if result["country_code"] == country:
                 export_proxies.append(host)
-        except:
+        except Exception:
             return
         sleep(0.5)  # to prevent API overload and block
 
@@ -30,7 +30,7 @@ def get_proxies_country(hosts_list: list = [], country: str = "RU") -> set:
         try:
             txt_file = open("proxies_queue_unchecked.txt", "r")
             hosts_list = set(txt_file.read().splitlines())  # last element not \n
-        except:
+        except Exception:
             return
 
     with concurrent.futures.ThreadPoolExecutor(

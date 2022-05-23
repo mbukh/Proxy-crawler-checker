@@ -40,7 +40,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -57,7 +57,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
         while True:
@@ -68,7 +68,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
                 if rows_count == 0:
                     # print(SERVICE_NAME, "Page changed, data not found on page.")
                     break
-            except:
+            except Exception:
                 break
 
             oldLen = len(export_proxies)
@@ -88,7 +88,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
                         + "]/td[5]",
                     )
                     export_proxies.add(protocol.text.lower() + "://" + ip_port.text)
-                except:
+                except Exception:
                     continue
 
             # new page not detected ( new proxies ) -> driver.quit()
@@ -112,7 +112,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
                 actions.move_to_element(next_page)
                 actions.click(next_page)
                 actions.perform()
-            except:
+            except Exception:
                 # print(SERVICE_NAME, "Can't move to the next page.")
                 break
 
@@ -126,7 +126,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
                         (By.XPATH, "//div/div/table/tbody/tr")
                     )
                 )
-            except:
+            except Exception:
                 continue
 
     driver.quit()

@@ -34,7 +34,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -51,7 +51,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
             return export_proxies
 
@@ -65,7 +65,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
             if rows_count == 0:
                 # print(SERVICE_NAME, "Page changed, data not found on page.")
                 break
-        except:
+        except Exception:
             break
 
         for row_num in range(rows_count):
@@ -99,7 +99,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
                 export_proxies.add(
                     protocol.text.lower() + "://" + ip.text + ":" + port.text
                 )
-            except:
+            except Exception:
                 # print(SERVICE_NAME, "Content changed", url)
                 break
 

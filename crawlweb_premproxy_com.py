@@ -35,7 +35,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return export_proxies
 
@@ -52,7 +52,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
         try:
@@ -64,7 +64,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
             if rows_count == 0:
                 # print(SERVICE_NAME, "Page changed, data not found on page.")
                 break
-        except:
+        except Exception:
             break
 
         for row_num in range(rows_count):
@@ -76,7 +76,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
                     + "]/td[1]",
                 )
                 export_proxies.add(ip_port.text)
-            except:
+            except Exception:
                 continue
         sleep(5)
 

@@ -37,7 +37,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -54,7 +54,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
             # ADD PAGING !!
@@ -79,7 +79,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
                     print(SERVICE_NAME, "Captcha not passed.")
                     return None
                 tried += 1
-            except:
+            except Exception:
                 break
 
         try:
@@ -91,7 +91,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
             if rows_count == 0:
                 # print(SERVICE_NAME, "Page changed, data not found on page.")
                 break
-        except:
+        except Exception:
             break
 
         for row_num in range(rows_count):
@@ -117,7 +117,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
                 export_proxies.add(
                     protocol.text.lower() + "://" + ip.text + ":" + port.text
                 )
-            except:
+            except Exception:
                 continue
 
     driver.quit()

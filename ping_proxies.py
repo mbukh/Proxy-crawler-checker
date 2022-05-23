@@ -20,7 +20,7 @@ def ping_proxies(hosts_list: list = []) -> set:
         try:
             txt_file = open("proxies_queue_unchecked.txt", "r")
             hosts_list = txt_file.read().splitlines()  # last element not \n
-        except:
+        except Exception:
             return
 
     with concurrent.futures.ThreadPoolExecutor(

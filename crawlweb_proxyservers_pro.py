@@ -40,7 +40,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -57,7 +57,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
             return export_proxies
 
@@ -69,7 +69,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
                         (By.XPATH, '//div[@class="card-body"]/div/table')
                     )
                 )
-            except:
+            except Exception:
                 print(SERVICE_NAME, "Timeout connect to a page", url)
                 return export_proxies
 
@@ -83,7 +83,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
                 if rows_count == 0:
                     # print(SERVICE_NAME, "Page changed, data not found on page.")
                     break
-            except:
+            except Exception:
                 break
 
             for row_num in range(rows_count):
@@ -101,7 +101,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
                         + "]/td[3]",
                     )
                     export_proxies.add(ip.text + ":" + port.text)
-                except:
+                except Exception:
                     continue
 
             # PAGING NAVIGATION
@@ -120,7 +120,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
                 actions.move_to_element(next_page)
                 actions.click(next_page)
                 actions.perform()
-            except:
+            except Exception:
                 # print(SERVICE_NAME, "Can't move to the next page.")
                 break
 

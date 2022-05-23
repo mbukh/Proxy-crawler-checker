@@ -190,7 +190,7 @@ def detect_proxies_type(
                 collect_queue_history=False,
                 save_queue_file=False,
             )
-        except:
+        except Exception:
             return None
 
     # progress bar

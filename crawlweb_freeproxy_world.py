@@ -45,7 +45,7 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -59,7 +59,7 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
         try:
@@ -71,7 +71,7 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
             if rows_count == 0:
                 # print(SERVICE_NAME, "Page changed, data not found on page.")
                 break
-        except:
+        except Exception:
             break
 
         for row_num in range(2, rows_count):
@@ -95,7 +95,7 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
                     + "]/td[6]",
                 )
                 export_proxies.add(protocol.text + "://" + ip.text + ":" + port.text)
-            except:
+            except Exception:
                 continue
         sleep(5)
 

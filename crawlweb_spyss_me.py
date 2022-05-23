@@ -25,7 +25,7 @@ def spyss_github(country: str = "RU") -> set:
                 )
             else:
                 print(SERVICE_NAME, "url responce error", url)
-        except:
+        except Exception:
             print(SERVICE_NAME, "Can't connect to the server.")
             return None
         sleep(5)

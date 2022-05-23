@@ -37,7 +37,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             ),
             options=options,
         )
-    except:
+    except Exception:
         print(SERVICE_NAME, "Can't open browser driver.")
         return None
 
@@ -54,7 +54,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             w.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
             # JAVASCRIPT EXECUTOR TO STOP PAGE LOAD
             driver.execute_script("window.stop();")
-        except:
+        except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
         # GET ANM + HIA RU PROXIES -> PROCEED TO PAGE
@@ -75,7 +75,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             )
             submit_input.click()
             sleep(3)
-        except:
+        except Exception:
             print(SERVICE_NAME, "Home page changed, can't proceed.")
             return None
 
@@ -89,7 +89,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             actions.click(close_ad)
             actions.perform()
             sleep(3)
-        except:
+        except Exception:
             pass
 
         # PARCE WHAT YOU GET
@@ -99,7 +99,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
                     (By.XPATH, "//table[2]/tbody/tr[4]/td/table/tbody/tr[4]")
                 )
             )
-        except:
+        except Exception:
             print(SERVICE_NAME, "Page changed, data not found on page.")
             return None
 
@@ -112,7 +112,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
             if rows_count == 0:
                 # print(SERVICE_NAME, "Page changed, data not found on page.")
                 break
-        except:
+        except Exception:
             break
 
         for row_num in range(3, rows_count - 1):
@@ -132,7 +132,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
                 export_proxies.add(
                     protocol.text.split()[0].lower() + "://" + ip_port.text
                 )
-            except:
+            except Exception:
                 continue
 
     driver.quit()

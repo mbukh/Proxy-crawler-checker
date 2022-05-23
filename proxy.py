@@ -21,14 +21,14 @@ def main(force_online_crawl: bool = False) -> int:
     # DETECTING PROXIES ENGINE
     try:
         import gather_queue_proxies
-    except:
+    except Exception:
         print("Missing main gathering module 'gather_queue_proxies.py'.")
         return -1
     # ========================
     # DETECTING PROXIES ENGINE
     try:
         import detect_proxy_type
-    except:
+    except Exception:
         print("Missing main proxy detection module 'detect_proxy_type.py'.")
         return -1
     # ========================
@@ -49,8 +49,8 @@ def main(force_online_crawl: bool = False) -> int:
     os.chdir(SCRIPT_DIR)
     # ===================================
 
-    MINIMUM_PROXY_FOR_RECHECK = 100
-    RECHECK_EVERY_MINS = 30
+    MINIMUM_PROXY_FOR_RECHECK = 120
+    RECHECK_EVERY_MINS = 40
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
     need_Online_Crawl = True
@@ -164,10 +164,13 @@ def main(force_online_crawl: bool = False) -> int:
             print("No proxy was detected.")
 
         countRoutines += 1
-        if countRoutines % 4 == 0:
+
+        # FORCE ONLINE CRAWL EVERY 4 ROUTINES
+        if countRoutines % 5 == 0:
             forceOnlineCrawl = True
         else:
             forceOnlineCrawl = False
+        # ===================================
 
         # END ROUTINE MESSAGE
         print(
