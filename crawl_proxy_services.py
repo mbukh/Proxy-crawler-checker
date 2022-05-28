@@ -37,7 +37,7 @@ def crawl_online_proxy_services(
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         res = set()
         futures = [
-            executor.submit(crawlweb_free_proxy_cz.free_proxy_cz),  # bans a lot
+            # executor.submit(crawlweb_free_proxy_cz.free_proxy_cz),  # bans a lot
             executor.submit(crawlweb_freeproxy_world.freeproxy_world),
             executor.submit(crawlweb_good_proxies_ru.good_proxies_ru, country="ru"),
             executor.submit(crawlweb_online_proxy_ru.online_proxy_ru),

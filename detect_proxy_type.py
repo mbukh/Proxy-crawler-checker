@@ -2,7 +2,7 @@ def detect_proxies_type(
     queue_proxies: list = [],
     save_anonymous: bool = True,
     debug: bool = False,
-    concurrect_checks: int = 50,
+    concurrect_checks: int = 35,
 ) -> set:
     # POSSIBLE FORMATS FOR hosts_list:
     # A) IP_ADDR:PORT
@@ -18,7 +18,7 @@ def detect_proxies_type(
 
     disable_warnings()
     # =============================
-    TMOUT = 5
+    TMOUT = 4
     CHECK_URLS_COUNT = 6
     SUCCESS_TIMES = 1
 

@@ -61,16 +61,6 @@ def main(force_online_crawl: bool = False) -> int:
     queue_proxies = set()
     set_proxies = set()
 
-    try:
-        # FILE "proxies_manual_queue.txt" AGE IN MINUTES
-        lastMod = os.path.getmtime(SCRIPT_DIR + "proxies_manual_queue.txt")
-        modFileAge = (time() - lastMod) / 60  # FILE AGE IN MINUTES
-        is_ManualFileChanged = (
-            modFileAge < RECHECK_EVERY_MINS
-        )  # IF FILE OLDER THAN RECHECK TIME
-    except Exception as e:
-        print('MISSING FILES "proxies_manual_queue.txt"\n')
-
     # IF QUEUE WAS RECENTLY EDITED -> SKIP ONLINE CRAWL
     try:
         # FILE "proxies_queue_unchecked.txt" AGE IN MINUTES
@@ -84,6 +74,17 @@ def main(force_online_crawl: bool = False) -> int:
 
     # MAIN LOOP: NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
     while True:
+
+        try:
+            # FILE "proxies_manual_queue.txt" AGE IN MINUTES
+            lastMod = os.path.getmtime(SCRIPT_DIR + "proxies_manual_queue.txt")
+            modFileAge = (time() - lastMod) / 60  # FILE AGE IN MINUTES
+            is_ManualFileChanged = (
+                modFileAge < RECHECK_EVERY_MINS
+            )  # IF FILE OLDER THAN RECHECK TIME
+        except Exception as e:
+            print('MISSING FILES "proxies_manual_queue.txt"\n')
+
         print("\n[", datetime.now(), "]", "Starting routine...")
 
         queue_proxies.update(
@@ -124,7 +125,7 @@ def main(force_online_crawl: bool = False) -> int:
             set_proxies = detect_proxy_type.detect_proxies_type(
                 queue_proxies,
                 save_anonymous=True,
-                concurrect_checks=75,
+                concurrect_checks=50,
             )
         else:
             print("\nNo proxy retrieved for detection.\n")
@@ -192,6 +193,7 @@ def main(force_online_crawl: bool = False) -> int:
             ):  # MINUTES
                 sleep(60)  # ONE MINUTE ASLEEP
             print("\n")
+            need_Online_Crawl = False
             # ====================================================
         else:
             need_Online_Crawl = True
