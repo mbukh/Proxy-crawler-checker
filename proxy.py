@@ -2,6 +2,9 @@ import sys
 
 
 def main(force_online_crawl: bool = False) -> int:
+    """
+    MAIN FUNCTION
+    """
     # BUILT-INS
     import os
     from time import sleep, time
@@ -49,14 +52,14 @@ def main(force_online_crawl: bool = False) -> int:
     os.chdir(SCRIPT_DIR)
     # ===================================
 
-    MINIMUM_PROXY_FOR_RECHECK = 120
+    MINIMUM_PROXY_FOR_RECHECK = 100
     RECHECK_EVERY_MINS = 40
     CAN_ONLINE_CRAWL = CRWALING_MODULE
 
-    need_Online_Crawl = True
-    forceOnlineCrawl = force_online_crawl
-    is_ManualFileChanged = False
-    countRoutines = 0
+    need_online_crawl = True
+    force_online_crawl = force_online_crawl
+    is_manual_file_changed = False
+    count_routines = 0
 
     queue_proxies = set()
     set_proxies = set()
@@ -65,22 +68,23 @@ def main(force_online_crawl: bool = False) -> int:
     try:
         # FILE "proxies_queue_unchecked.txt" AGE IN MINUTES
         lastMod = os.path.getmtime(SCRIPT_DIR + "proxies_queue_unchecked.txt")
-        modFileAge = (time() - lastMod) / 60  # FILE AGE IN MINUTES
-        need_Online_Crawl = not (
-            modFileAge < RECHECK_EVERY_MINS / 3
+        modified_file_age = (time() - lastMod) / 60  # FILE AGE IN MINUTES
+        need_online_crawl = not (
+            modified_file_age < RECHECK_EVERY_MINS / 3
         )  # IF PROXIES WERE RECENTRLY ADDED TO FILE NO NEED TO ONLINE CRAWL
     except Exception as e:
         print('MISSING FILES "proxies_manual_queue.txt"\n')
 
-    # MAIN LOOP: NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
+    # MAIN LOOP:
+    # NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
     while True:
 
         try:
             # FILE "proxies_manual_queue.txt" AGE IN MINUTES
             lastMod = os.path.getmtime(SCRIPT_DIR + "proxies_manual_queue.txt")
-            modFileAge = (time() - lastMod) / 60  # FILE AGE IN MINUTES
-            is_ManualFileChanged = (
-                modFileAge < RECHECK_EVERY_MINS
+            modified_file_age = (time() - lastMod) / 60  # FILE AGE IN MINUTES
+            is_manual_file_changed = (
+                modified_file_age < RECHECK_EVERY_MINS
             )  # IF FILE OLDER THAN RECHECK TIME
         except Exception as e:
             print('MISSING FILES "proxies_manual_queue.txt"\n')
@@ -91,7 +95,7 @@ def main(force_online_crawl: bool = False) -> int:
             gather_queue_proxies.gather_queue_proxies(
                 current_queue=set_proxies,
                 collect_queue_history=True,
-                scan_manual_proxies=is_ManualFileChanged,
+                scan_manual_proxies=is_manual_file_changed,
                 collect_checked_proxies=True,
                 save_queue_file=False,
             )
@@ -104,7 +108,7 @@ def main(force_online_crawl: bool = False) -> int:
         # =================================================================
 
         # RUN MAIN CRAWL ENGINE IF NEEDED
-        if forceOnlineCrawl or CAN_ONLINE_CRAWL and need_Online_Crawl:
+        if CAN_ONLINE_CRAWL and (force_online_crawl or need_online_crawl):
             queue_proxies = crawl_proxy_services.crawl_online_proxy_services(
                 existing_proxies=queue_proxies,
                 save_queue_file=True,
@@ -119,7 +123,7 @@ def main(force_online_crawl: bool = False) -> int:
         # queue_proxies = utils_for_proxies.filter_proxies(queue_proxies)
         # ==============
 
-        # MAIN ENGINE: VALIDATE A PROXY AND ITS ANONIMITY
+        # VALIDATE A PROXY AND ITS ANONIMITY
         if len(queue_proxies):
             print("\nDetecting working proxies and their types, anonymity:")
             set_proxies = detect_proxy_type.detect_proxies_type(
@@ -129,7 +133,7 @@ def main(force_online_crawl: bool = False) -> int:
             )
         else:
             print("\nNo proxy retrieved for detection.\n")
-        # ===============================================
+        # ==================================
 
         if set_proxies:
             # SAVE VALIDATED PROXIES TO FILE
@@ -164,13 +168,13 @@ def main(force_online_crawl: bool = False) -> int:
         else:
             print("No proxy was detected.")
 
-        countRoutines += 1
+        count_routines += 1
 
         # FORCE ONLINE CRAWL EVERY 4 ROUTINES
-        if countRoutines % 5 == 0:
-            forceOnlineCrawl = True
+        if count_routines % 5 == 0:
+            force_online_crawl = True
         else:
-            forceOnlineCrawl = False
+            force_online_crawl = False
         # ===================================
 
         # END ROUTINE MESSAGE
@@ -179,8 +183,8 @@ def main(force_online_crawl: bool = False) -> int:
             datetime.now(),
             "]",
             "Routine done",
-            countRoutines,
-            "time" if countRoutines == 1 else "times",
+            count_routines,
+            "time" if count_routines == 1 else "times",
             "\n",
         )
         # ===================
@@ -193,11 +197,12 @@ def main(force_online_crawl: bool = False) -> int:
             ):  # MINUTES
                 sleep(60)  # ONE MINUTE ASLEEP
             print("\n")
-            need_Online_Crawl = False
+            need_online_crawl = False
             # ====================================================
         else:
-            need_Online_Crawl = True
-    # =====================================================================
+            need_online_crawl = True
+    # ==========================================================
+    # ==========
     return 0
 
 
