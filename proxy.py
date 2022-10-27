@@ -32,10 +32,10 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70) 
         os.environ["WDM_LOCAL"] = "1"
         ChromeDriverManager(path="./chromedriver").install()
     except Exception as e:
-        print("Error occured while updating webdriver-manager", e)
+        print("Error occurred while updating webdriver-manager", e)
         return -1
     # ==============================
-    
+
     # DETECTING PROXIES ENGINE
     try:
         import gather_queue_proxies
