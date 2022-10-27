@@ -3,7 +3,6 @@ def crawl_online_proxy_services(
 ) -> set:
     # BUILT-INS
     import concurrent.futures  # multithreading
-
     # =========
 
     # CRAWLING MODULES
@@ -23,7 +22,6 @@ def crawl_online_proxy_services(
     import crawlweb_socks_proxy_net
     import crawlweb_spys_one
     import crawlweb_spyss_me
-
     # ==============
 
     # CREATE A SET OF ALWAYS UNIQUE PROXIES
@@ -54,7 +52,6 @@ def crawl_online_proxy_services(
             executor.submit(crawlweb_spys_one.spys_one),  # minimized windows hides data
             executor.submit(crawlweb_spyss_me.spyss_github, country="RU"),
             ##################### PARCE PROXY TYPES !! #######################
-            # https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1
             # https://www.proxyhub.me/en/ru-free-proxy-list.html
             # https://geonode.com/free-proxy-list/
             # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/

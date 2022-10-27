@@ -9,6 +9,13 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.action_chains import ActionChains
     from time import sleep
     import logging
+    import os
+
+    # Turn off webdriver-manager logs
+    os.environ["WDM_LOG"] = str(logging.NOTSET)
+    # By default, all driver binaries are saved to user.home/.wdm folder.
+    # You can override this setting and save binaries to project.root/.wdm.
+    os.environ["WDM_LOCAL"] = "1"
 
     SERVICE_NAME = "Free-proxy.cz:"
     TMOUT = 30
@@ -25,23 +32,22 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.headless = hideBrowser
     options.add_argument("--window-position=400,500")
     options.add_argument("--window-size=1200,500")
-
     options.add_argument("--disable-gpu")
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+
     try:
         driver = webdriver.Chrome(
             service=Service(
-                ChromeDriverManager(
-                    log_level=logging.WARNING, print_first_line=False
-                ).install()
+                ChromeDriverManager(path="./chromedriver").install(),
             ),
             options=options,
         )
-    except Exception:
+    except Exception as e:
         print(SERVICE_NAME, "Can't open browser driver.")
+        print(e)
         return None
 
     if minimized:

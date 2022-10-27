@@ -8,6 +8,13 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     from webdriver_manager.chrome import ChromeDriverManager
     from time import sleep
     import logging
+    import os
+
+    # Turn off webdriver-manager logs
+    os.environ["WDM_LOG"] = str(logging.NOTSET)
+    # By default, all driver binaries are saved to user.home/.wdm folder.
+    # You can override this setting and save binaries to project.root/.wdm.
+    os.environ["WDM_LOCAL"] = "1"
 
     SERVICE_NAME = "Premproxy.com:"
     TMOUT = 20
@@ -26,18 +33,18 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    
     try:
         driver = webdriver.Chrome(
             service=Service(
-                ChromeDriverManager(
-                    log_level=logging.WARNING, print_first_line=False
-                ).install()
+                ChromeDriverManager(path="./chromedriver").install(),
             ),
             options=options,
         )
-    except Exception:
+    except Exception as e:
         print(SERVICE_NAME, "Can't open browser driver.")
-        return export_proxies
+        print(e)
+        return None
 
     if minimized:
         driver.minimize_window()  # if no user interaction needed, but browser must be open

@@ -2,12 +2,19 @@ def proxy_nova_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
-    from selenium import webdriver
+    from selenium.webdriver import Chrome as Browser
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
     from webdriver_manager.chrome import ChromeDriverManager
     from time import sleep
     import logging
+    import os
+
+    # Turn off webdriver-manager logs
+    os.environ["WDM_LOG"] = str(logging.NOTSET)
+    # By default, all driver binaries are saved to user.home/.wdm folder.
+    # You can override this setting and save binaries to project.root/.wdm.
+    os.environ["WDM_LOCAL"] = "1"
 
     SERVICE_NAME = "Proxynova.com:"
     TMOUT = 20
@@ -25,17 +32,17 @@ def proxy_nova_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+
     try:
-        driver = webdriver.Chrome(
+        driver = Browser(
             service=Service(
-                ChromeDriverManager(
-                    log_level=logging.WARNING, print_first_line=False
-                ).install()
+                ChromeDriverManager(path="./chromedriver").install(),
             ),
             options=options,
         )
-    except Exception:
+    except Exception as e:
         print(SERVICE_NAME, "Can't open browser driver.")
+        print(e)
         return None
 
     for proxy_type, url in urls:

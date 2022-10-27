@@ -1,7 +1,4 @@
-import sys
-
-
-def main(force_online_crawl: bool = False) -> int:
+def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70) -> int:
     """
     MAIN FUNCTION
     """
@@ -21,6 +18,24 @@ def main(force_online_crawl: bool = False) -> int:
         return -1
     # ============
 
+    # SELENIUM AND WEB_DRIVER UPDATE
+    try:
+        import selenium
+        import webdriver_manager
+    except Exception as e:
+        print("Run: python -m pip install selenium webdriver-manager")
+        return -1
+    try:
+        from webdriver_manager.chrome import ChromeDriverManager
+        # By default, all driver binaries are saved to user.home/.wdm folder.
+        # You can override this setting and save binaries to project.root/.wdm.
+        os.environ["WDM_LOCAL"] = "1"
+        ChromeDriverManager(path="./chromedriver").install()
+    except Exception as e:
+        print("Error occured while updating webdriver-manager", e)
+        return -1
+    # ==============================
+    
     # DETECTING PROXIES ENGINE
     try:
         import gather_queue_proxies
@@ -40,21 +55,21 @@ def main(force_online_crawl: bool = False) -> int:
     try:
         import crawl_proxy_services
 
-        CRWALING_MODULE = True
+        CRAWLING_MODULE = True
     except Exception as e:
-        CRWALING_MODULE = False
+        CRAWLING_MODULE = False
         print("Missing crawling module. Manual checks and rechecks only.\n")
     # ==============
 
-    # SET WORKIND DIR TO SCRIPT DIRECTORY
+    # SET WORKING DIR TO SCRIPT DIRECTORY
     SCRIPT_PATH = os.path.abspath(__file__)
     SCRIPT_DIR = os.path.dirname(SCRIPT_PATH) + "/"
     os.chdir(SCRIPT_DIR)
     # ===================================
 
-    MINIMUM_PROXY_FOR_RECHECK = 100
-    RECHECK_EVERY_MINS = 40
-    CAN_ONLINE_CRAWL = CRWALING_MODULE
+    MINIMUM_PROXY_FOR_RECHECK = minimum_proxy_for_recheck
+    RECHECK_EVERY_MINS = 60
+    CAN_ONLINE_CRAWL = CRAWLING_MODULE
 
     need_online_crawl = True
     force_online_crawl = force_online_crawl
@@ -71,7 +86,7 @@ def main(force_online_crawl: bool = False) -> int:
         modified_file_age = (time() - lastMod) / 60  # FILE AGE IN MINUTES
         need_online_crawl = not (
             modified_file_age < RECHECK_EVERY_MINS / 3
-        )  # IF PROXIES WERE RECENTRLY ADDED TO FILE NO NEED TO ONLINE CRAWL
+        )  # IF PROXIES WERE RECENTLY ADDED TO FILE NO NEED TO ONLINE CRAWL
     except Exception as e:
         print('MISSING FILES "proxies_manual_queue.txt"\n')
 
@@ -207,7 +222,23 @@ def main(force_online_crawl: bool = False) -> int:
 
 
 if __name__ == "__main__":
-    if "force" in sys.argv or "-force" in sys.argv:
-        main(force_online_crawl=True)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Crawl and parse proxies. By mbukhman.")
+    parser.add_argument('--force', '-f', help='force full crawl with the first run', default=False, action="store_true")
+    parser.add_argument('--min-proxies', '-mp', type=int, metavar='n', help='minimum proxies count (n) to restart crawling immediately (default 70)', default=70)
+    args = parser.parse_args()
+
+    if args.force:
+        force_online_crawl = True
+        print("Forcing first crawl (--force)")
     else:
-        main()
+        force_online_crawl = False
+
+    if args.min_proxies:
+        minimum_proxy_for_recheck = args.min_proxies
+        print("Limiting minimum proxies count by", minimum_proxy_for_recheck)
+    else:
+        minimum_proxy_for_recheck = 70
+
+    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck)
