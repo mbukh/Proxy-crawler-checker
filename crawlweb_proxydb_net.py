@@ -2,7 +2,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
-    from selenium import webdriver
+    from selenium.webdriver import Chrome as Browser
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
     from webdriver_manager.chrome import ChromeDriverManager
@@ -40,7 +40,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-dev-shm-usage")
     
     try:
-        driver = webdriver.Chrome(
+        driver = Browser(
             service=Service(
                 ChromeDriverManager(path="./chromedriver").install(),
             ),
