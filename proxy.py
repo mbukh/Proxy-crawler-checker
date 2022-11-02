@@ -1,4 +1,4 @@
-def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70) -> int:
+def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, clear_queue=False) -> int:
     """
     MAIN FUNCTION
     """
@@ -88,7 +88,15 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70) 
             modified_file_age < RECHECK_EVERY_MINS / 3
         )  # IF PROXIES WERE RECENTLY ADDED TO FILE NO NEED TO ONLINE CRAWL
     except Exception as e:
-        print('MISSING FILES "proxies_manual_queue.txt"\n')
+        print('MISSING FILES "proxies_queue_unchecked.txt"\n')
+
+    # CLEAR UNCHECKED QUEUE
+    if clear_queue:
+        try:
+            open(SCRIPT_DIR + "proxies_queue_unchecked.txt", 'w').close()
+        except:
+            print('Can\'t access file "proxies_queue_unchecked.txt"\n')
+
 
     # MAIN LOOP:
     # NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
@@ -227,6 +235,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Crawl and parse proxies. By mbukhman.")
     parser.add_argument('--force', '-f', help='force full crawl with the first run', default=False, action="store_true")
     parser.add_argument('--min-proxies', '-mp', type=int, metavar='n', help='minimum proxies count (n) to restart crawling immediately (default 70)', default=70)
+    parser.add_argument('--clean-start', '-cls', help='clean unchecked queue left from previous runs', default=False, action="store_true")
     args = parser.parse_args()
 
     if args.force:
@@ -241,4 +250,10 @@ if __name__ == "__main__":
     else:
         minimum_proxy_for_recheck = 70
 
-    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck)
+    if args.clean_start:
+        clear_queue = True
+        print("Clearing unchecked queue in proxies_queue_unchecked.txt")
+    else:
+        clear_queue = False
+
+    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck, clear_queue=clear_queue)
