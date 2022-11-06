@@ -6,7 +6,7 @@ def gather_queue_proxies(
     save_queue_file: bool = False,
 ) -> set:
     # CRAWLING LOCAL FILES MODULE
-    import parce_local_proxies
+    import parse_local_proxies
 
     # ===========================
 
@@ -35,7 +35,7 @@ def gather_queue_proxies(
     # COLLECT PROXIES HISTORY FOR FUTURE RECHECK / WORK DIR SET EARLIER TO SCRIPT DIR
     if collect_queue_history:
         oldLen = len(queue_proxies)
-        queue_history_proxies = parce_local_proxies.get_proxies_from_file(
+        queue_history_proxies = parse_local_proxies.get_proxies_from_file(
             filename="proxies_queue_unchecked.txt",
         )
         queue_proxies.update(queue_history_proxies)
@@ -45,7 +45,7 @@ def gather_queue_proxies(
     # OLD PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if collect_checked_proxies:
         oldLen = len(queue_proxies)
-        old_proxies = parce_local_proxies.get_proxies_from_file(
+        old_proxies = parse_local_proxies.get_proxies_from_file(
             filename="proxies_.txt",
         )
         queue_proxies.update(old_proxies)
@@ -59,7 +59,7 @@ def gather_queue_proxies(
     # MANUAL PROXIES / WORK DIR SET EARLIER TO SCRIPT DIR
     if scan_manual_proxies:
         oldLen = len(queue_proxies)
-        manual_proxies = parce_local_proxies.get_proxies_from_file(
+        manual_proxies = parse_local_proxies.get_proxies_from_file(
             filename="proxies_manual_queue.txt",
         )
         queue_proxies.update(manual_proxies)
@@ -67,7 +67,7 @@ def gather_queue_proxies(
         print("Added", len(queue_proxies) - oldLen, "unique new proxies.")
     # ===================================================
 
-    # SAVE ALL PARCED PROXIES TO QUEUE FILE
+    # SAVE ALL PARSED PROXIES TO QUEUE FILE
     # WORK DIR SET EARLIER TO SCRIPT DIR
     # SKIP < IF NO NEW PROXIES WERE ADDED
     if save_queue_file:

@@ -26,7 +26,7 @@ def crawl_online_proxy_services(
 
     # CREATE A SET OF ALWAYS UNIQUE PROXIES
     export_proxies = set()
-    parced_proxies = set()
+    parsed_proxies = set()
     # =====================================
     oldLen = len(existing_proxies)
 
@@ -51,7 +51,7 @@ def crawl_online_proxy_services(
             executor.submit(crawlweb_socks_proxy_net.socks_proxy_net),
             executor.submit(crawlweb_spys_one.spys_one),  # minimized windows hides data
             executor.submit(crawlweb_spyss_me.spyss_github, country="RU"),
-            ##################### PARCE PROXY TYPES !! #######################
+            ##################### PARSE PROXY TYPES !! #######################
             # https://www.proxyhub.me/en/ru-free-proxy-list.html
             # https://geonode.com/free-proxy-list/
             # https://proxyline.net/en/besplatnye-onlajn-proksi-servera/
@@ -59,10 +59,10 @@ def crawl_online_proxy_services(
             # https://premiumproxy.net/top-country-proxy-list/RU-Russia ## COPY OF spys_one
         ]
         for future in concurrent.futures.as_completed(futures):
-            parced_proxies.update(future.result() if future.result() else set())
+            parsed_proxies.update(future.result() if future.result() else set())
     # ====================================
 
-    export_proxies.update(parced_proxies)
+    export_proxies.update(parsed_proxies)
     export_proxies.update(existing_proxies)
 
     # REMOVE DUBLICATES PROXIES WITHOUT TYPE://
@@ -73,16 +73,16 @@ def crawl_online_proxy_services(
     export_proxies.difference_update(detected_proxies)
     # =================
 
-    print("Parced", len(parced_proxies), "proxies.")
+    print("Parsed", len(parsed_proxies), "proxies.")
 
     print("Added", len(export_proxies) - oldLen, "new unique proxies.")
     print("[Total]", len(export_proxies), "unique proxies.")
 
-    # SAVE ALL PARCED PROXIES TO QUEUE FILE
+    # SAVE ALL PARSED PROXIES TO QUEUE FILE
     # WORK DIR SET EARLIER TO SCRIPT DIR
     # SKIP < IF NO NEW PROXIES WERE ADDED
     if save_queue_file:
-        if len(export_proxies) > len(existing_proxies) and len(parced_proxies):
+        if len(export_proxies) > len(existing_proxies) and len(parsed_proxies):
             print(
                 "\nSaving queue, writing",
                 len(export_proxies),

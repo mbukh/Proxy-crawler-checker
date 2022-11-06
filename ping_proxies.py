@@ -19,9 +19,9 @@ def ping_proxies(hosts_list: list = [], debug=False) -> set:
 
     if not hosts_list:
         try:
-            import parce_local_proxies
+            import parse_local_proxies
 
-            raw_proxies = parce_local_proxies.get_proxies_from_file(
+            raw_proxies = parse_local_proxies.get_proxies_from_file(
                 "proxies_queue_unchecked.txt"
             )
             ips = [x.split("://")[-1].split(":")[0] for x in raw_proxies]

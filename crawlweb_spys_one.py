@@ -99,7 +99,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
         except Exception:
             pass
 
-        # PARCE WHAT YOU GET
+        # PARSE WHAT YOU GET
         try:
             table_proxy = WebDriverWait(driver, TMOUT).until(
                 EC.presence_of_element_located(

@@ -117,9 +117,9 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
         queue_proxies.update(
             gather_queue_proxies.gather_queue_proxies(
                 current_queue=set_proxies,
-                collect_queue_history=True,
+                collect_queue_history=accumulate_queue,
+                collect_checked_proxies=accumulate_queue,
                 scan_manual_proxies=is_manual_file_changed,
-                collect_checked_proxies=True,
                 save_queue_file=accumulate_queue,
             )
         )
@@ -134,7 +134,7 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
         if CAN_ONLINE_CRAWL and (force_online_crawl or need_online_crawl):
             queue_proxies = crawl_proxy_services.crawl_online_proxy_services(
                 existing_proxies=queue_proxies,
-                save_queue_file=True,
+                save_queue_file=accumulate_queue,
             )
             force_online_crawl = False
         else:
@@ -151,7 +151,7 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
             print("\nDetecting working proxies and their types, anonymity:")
             set_proxies = detect_proxy_type.detect_proxies_type(
                 queue_proxies,
-                save_anonymous=True,
+                save_anonymous=False,
                 concurrent_checks=50,
             )
         else:
