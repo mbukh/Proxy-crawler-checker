@@ -1,4 +1,4 @@
-def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, clear_queue=False) -> int:
+def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, clear_queue: bool = False, accumulate_queue: bool = False) -> int:
     """
     MAIN FUNCTION
     """
@@ -120,7 +120,7 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
                 collect_queue_history=True,
                 scan_manual_proxies=is_manual_file_changed,
                 collect_checked_proxies=True,
-                save_queue_file=False,
+                save_queue_file=accumulate_queue,
             )
         )
 
@@ -152,7 +152,7 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
             set_proxies = detect_proxy_type.detect_proxies_type(
                 queue_proxies,
                 save_anonymous=True,
-                concurrect_checks=50,
+                concurrent_checks=50,
             )
         else:
             print("\nNo proxy retrieved for detection.\n")
@@ -235,7 +235,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Crawl and parse proxies. By mbukhman.")
     parser.add_argument('--force', '-f', help='force full crawl with the first run', default=False, action="store_true")
     parser.add_argument('--min-proxies', '-mp', type=int, metavar='n', help='minimum proxies count (n) to restart crawling immediately (default 70)', default=70)
-    parser.add_argument('--clean-start', '-cls', help='clean unchecked queue left from previous runs', default=False, action="store_true")
+    parser.add_argument('--clear_queue', '-clq', help='clean unchecked queue left from previous runs', default=False, action="store_true")
+    parser.add_argument('--accumulate_queue', '-accq', help='accumulate old unchecked queue between runs, much slower checks', default=False, action="store_true")
     args = parser.parse_args()
 
     if args.force:
@@ -250,10 +251,16 @@ if __name__ == "__main__":
     else:
         minimum_proxy_for_recheck = 70
 
-    if args.clean_start:
+    if args.clear_queue:
         clear_queue = True
         print("Clearing unchecked queue in proxies_queue_unchecked.txt")
     else:
         clear_queue = False
 
-    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck, clear_queue=clear_queue)
+    if args.accumulate_queue:
+        accumulate_queue = True
+        print("Saving unchecked queue in proxies_queue_unchecked.txt between runs. Might be slow.")
+    else:
+        accumulate_queue = False
+
+    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck, clear_queue=clear_queue, accumulate_queue=accumulate_queue)
