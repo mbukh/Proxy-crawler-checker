@@ -19,7 +19,7 @@ def detect_proxies_type(
     disable_warnings()
     # =============================
     TMOUT = 4
-    CHECK_URLS_COUNT = 6
+    CHECK_URLS_COUNT = 3
     SUCCESS_TIMES = 1
 
     export_proxies = set()
@@ -80,7 +80,7 @@ def detect_proxies_type(
         checkUrls = [
             "https://api.ipify.org/",  # txt or https://api.ipify.org?format=json
             "https://api.bigdatacloud.net/data/client-ip",  # json
-            "https://api.ip.sb/ip",  # txt
+            # "https://api.ip.sb/ip",  # txt no responce
             "https://api.myip.com/",
             "https://api.myip.la",  # txt or https://api.myip.la/cn?json
             "https://curlmyip.net/",  # txt
@@ -95,7 +95,7 @@ def detect_proxies_type(
             "https://ipinfo.io/ip",  # txt
             "https://ipecho.net/plain",  # txt
             "https://ip4only.me/api/",  # ± txt
-            "https://ip-api.com/json/",
+            # "https://ip-api.com/json/", # status fail membership $$
             "https://jsonip.com/",
             "https://l2.io/ip",  # txt or https://www.l2.io/ip.json
             "https://trackip.net/ip",  # txt or https://www.trackip.net/ip?json
