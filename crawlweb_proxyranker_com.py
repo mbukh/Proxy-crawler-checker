@@ -1,4 +1,8 @@
-def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
+def proxyranker_com(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_name="russian_federation",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -21,8 +25,8 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     export_proxies = set()
 
     urls = [
-        ("all", "https://proxyranker.com/russian_federation/"),
-        ("all", "https://proxyranker.com/russian_federation/list/"),
+        ("all", "https://proxyranker.com/" + country_name.lower() + "/"),
+        ("all", "https://proxyranker.com/" + country_name.lower() + "/list/"),
     ]
 
     options = Options()
@@ -33,7 +37,7 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -97,4 +101,10 @@ def proxyranker_com(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(proxyranker_com())
+    pr_list = proxyranker_com(
+        minimized=False,
+        hideBrowser=False,
+        country_name="israel",
+    )
+    for pr in pr_list:
+        print(pr)

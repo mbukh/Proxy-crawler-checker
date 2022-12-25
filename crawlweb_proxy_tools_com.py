@@ -1,4 +1,8 @@
-def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
+def proxy_tools_com(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -18,11 +22,11 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     os.environ["WDM_LOCAL"] = "1"
 
     SERVICE_NAME = "Proxy-tools.com:"
-    TMOUT = 30
+    TMOUT = 30  # Wait for captcha enter
     export_proxies = set()
 
     urls = [
-        ("all", "https://proxy-tools.com/proxy/ru"),
+        ("all", "https://proxy-tools.com/proxy/" + country_code.lower()),
     ]
 
     options = Options()
@@ -35,7 +39,7 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -134,4 +138,10 @@ def proxy_tools_com(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(proxy_tools_com())
+    pr_list = proxy_tools_com(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)

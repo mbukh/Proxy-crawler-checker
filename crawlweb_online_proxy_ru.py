@@ -1,4 +1,8 @@
-def online_proxy_ru(minimized: bool = False, hideBrowser: bool = False) -> set:
+def online_proxy_ru(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    # country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -97,4 +101,6 @@ def online_proxy_ru(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(online_proxy_ru())
+    pr_list = online_proxy_ru()
+    for pr in pr_list:
+        print(pr)

@@ -1,4 +1,6 @@
-def proxyscrape_com(country: str = "RU") -> set:
+def proxyscrape_com(
+    country_code: str = "ru",
+) -> set:
     import requests
     from time import sleep
 
@@ -10,19 +12,19 @@ def proxyscrape_com(country: str = "RU") -> set:
         (
             "https",
             "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country="
-            + country.upper()
+            + country_code.upper()
             + "&ssl=yes&anonymity=all&simplified=true",
         ),
         (
             "socks4",
             "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks4&timeout=10000&country="
-            + country.upper()
+            + country_code.upper()
             + "&simplified=true",
         ),
         (
             "socks5",
             "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country="
-            + country.upper()
+            + country_code.upper()
             + "&simplified=true",
         ),
     ]
@@ -32,10 +34,10 @@ def proxyscrape_com(country: str = "RU") -> set:
             resp = requests.get(url, timeout=TMOUT)
             if resp.status_code == 200:
                 export_proxies.update(
-                    [proxy_type + "://" + x.rstrip() for x in resp.text.split("\n")]
+                    [proxy_type + "://" + x.rstrip() for x in resp.text.split("\n") if x]
                 )
             else:
-                print(SERVICE_NAME, "url responce error", url)
+                print(SERVICE_NAME, "url response error", url)
         except Exception:
             print(SERVICE_NAME, "Can't connect to the server.")
             return None
@@ -47,4 +49,8 @@ def proxyscrape_com(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(proxyscrape_com())
+    pr_list = proxyscrape_com(
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)

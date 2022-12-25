@@ -1,4 +1,8 @@
-def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
+def freeproxy_world(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -22,28 +26,22 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
 
     urls = [
         (
-            "socks4",
-            "https://www.freeproxy.world/?type=socks4&anonymity=&country=RU&speed=&port=&page=1",
-        ),
-        (
-            "socks5",
-            "https://www.freeproxy.world/?type=socks5&anonymity=&country=RU&speed=&port=&page=1",
-        ),
-        (
-            "https",
-            "https://www.freeproxy.world/?type=https&anonymity=&country=RU&speed=&port=&page=1",
+            "all",
+            "https://www.freeproxy.world/?type=&anonymity=4&country="
+            + country_code.upper()
+            + "&speed=&port=&page=1",
         ),
     ]
 
     options = Options()
-    options.headless = True
+    options.headless = hideBrowser
     options.add_argument("--window-size=1400,900")
     options.add_argument("--disable-gpu")
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -81,7 +79,7 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
         except Exception:
             break
 
-        for row_num in range(2, rows_count):
+        for row_num in range(1, rows_count):
             try:
                 ip = driver.find_element(
                     by=By.XPATH,
@@ -113,4 +111,10 @@ def freeproxy_world(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(freeproxy_world())
+    pr_list = freeproxy_world(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)

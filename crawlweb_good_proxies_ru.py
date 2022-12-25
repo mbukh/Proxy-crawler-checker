@@ -1,4 +1,4 @@
-def good_proxies_ru(country: str = "RU") -> set:
+def good_proxies_ru(country_code: str = "ru") -> set:
     import requests
     from time import sleep
 
@@ -9,20 +9,20 @@ def good_proxies_ru(country: str = "RU") -> set:
     urls = [
         (
             "socks4",
-            "https://api.good-proxies.ru/getfree.php?type%5Bsocks4%5D=on&anon%5B%27transparent%27%5D=on&anon%5B%27anonymous%27%5D=on&anon%5B%27elite%27%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
-            + country.lower()
+            "https://api.good-proxies.ru/getfree.php?type%5Bsocks4%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
+            + country_code.lower()
             + "&key=freeproxy",
         ),
         (
             "socks5",
-            "https://api.good-proxies.ru/getfree.php?type%5Bsocks5%5D=on&anon%5B%27transparent%27%5D=on&anon%5B%27anonymous%27%5D=on&anon%5B%27elite%27%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
-            + country.lower()
+            "https://api.good-proxies.ru/getfree.php?type%5Bsocks5%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
+            + country_code.lower()
             + "&key=freeproxy",
         ),
         (
             "https",
-            "https://api.good-proxies.ru/getfree.php?access%5B%27supportsHttps%27%5D=on&anon%5B%27transparent%27%5D=on&anon%5B%27anonymous%27%5D=on&anon%5B%27elite%27%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
-            + country.lower()
+            "https://api.good-proxies.ru/getfree.php?access%5B%27supportsHttps%27%5D=on&anon%5B%27transparent%27%5D=on&count=100&ping=8000&time=600&works=90&country%5B%5D="
+            + country_code.lower()
             + "&key=freeproxy",
         ),
     ]
@@ -50,4 +50,6 @@ def good_proxies_ru(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(good_proxies_ru(country="RU"))
+    pr_list = good_proxies_ru(country_code="il")
+    for pr in pr_list:
+        print(pr)

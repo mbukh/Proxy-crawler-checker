@@ -1,4 +1,6 @@
-def proxyscan_io(country: str = "RU") -> set:
+def proxyscan_io(
+    country_code: str = "ru",
+) -> set:
     import requests
     from time import sleep
 
@@ -10,7 +12,7 @@ def proxyscan_io(country: str = "RU") -> set:
         (
             "all",
             "https://www.proxyscan.io/api/proxy?limit=100&type=socks4,socks5,https&format=json&country="
-            + country.lower(),
+            + country_code.lower(),
         )
     ]
 
@@ -25,7 +27,7 @@ def proxyscan_io(country: str = "RU") -> set:
                     ]
                 )
             else:
-                print(SERVICE_NAME, "url responce error", url)
+                print(SERVICE_NAME, "url response error", url)
         except Exception as e:
             print(SERVICE_NAME, "Can't connect to the server.")
             return None
@@ -37,4 +39,8 @@ def proxyscan_io(country: str = "RU") -> set:
 
 
 if __name__ == "__main__":
-    print(proxyscan_io(country="ru"))
+    pr_list = proxyscan_io(
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)

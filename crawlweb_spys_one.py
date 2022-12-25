@@ -1,4 +1,8 @@
-def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
+def spys_one(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait, Select
     from selenium.webdriver.support import expected_conditions as EC
@@ -35,7 +39,7 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -66,22 +70,28 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
 
         # GET ANM + HIA RU PROXIES -> PROCEED TO PAGE
         try:
+            # COUNTRY
             country_select = driver.find_element(
-                by=By.XPATH, value='//select[@id="tldc"]'
+                by=By.XPATH,
+                value='//select[@id="tldc"]/option[contains(text(), "'
+                + country_code.upper()
+                + '")]',
             )
-            country_select = Select(country_select)
-            country_select.select_by_value("191")  # Russia
+            country_select.click()
             sleep(1)
-            anon_select = driver.find_element(by=By.XPATH, value='//select[@id="anmm"]')
-            anon_select = Select(anon_select)
-            anon_select.select_by_value("1")  # ANM + HIA
-            sleep(2)
+            # ANM + HIA
+            anon_select = driver.find_element(
+                by=By.XPATH, value='//select[@id="anmm"]/option[@value=1]'
+            )
+            anon_select.click()
+            sleep(1)
+            # SUBMIT
             submit_input = driver.find_element(
                 by=By.XPATH,
                 value='//input[contains(@class,"spy8") and contains(@type,"submit")]',
             )
             submit_input.click()
-            sleep(3)
+            sleep(2)
         except Exception:
             print(SERVICE_NAME, "Home page changed, can't proceed.")
             return None
@@ -149,4 +159,10 @@ def spys_one(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(spys_one())
+    pr_list = spys_one(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)

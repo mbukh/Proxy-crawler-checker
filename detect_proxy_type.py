@@ -3,6 +3,7 @@ def detect_proxies_type(
     save_anonymous: bool = True,
     debug: bool = False,
     concurrent_checks: int = 35,
+    scan_manual_proxies: bool = True,
 ) -> set:
     # POSSIBLE FORMATS FOR hosts_list:
     # A) IP_ADDR:PORT
@@ -185,7 +186,7 @@ def detect_proxies_type(
             import gather_queue_proxies
 
             queue_proxies = gather_queue_proxies.gather_queue_proxies(
-                scan_manual_proxies=True,
+                scan_manual_proxies=scan_manual_proxies,
                 collect_checked_proxies=False,
                 collect_queue_history=False,
                 save_queue_file=False,
@@ -238,5 +239,6 @@ if __name__ == "__main__":
             save_anonymous=False,
             debug=False,
             concurrent_checks=35,
+            scan_manual_proxies=True,
         )
     )

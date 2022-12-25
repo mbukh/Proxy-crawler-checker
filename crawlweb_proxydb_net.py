@@ -1,4 +1,8 @@
-def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
+def proxydb_net(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -24,7 +28,8 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
     urls = [
         (
             "all",
-            "https://proxydb.net/?protocol=https&protocol=socks4&protocol=socks5&anonlvl=2&anonlvl=3&anonlvl=4&country=RU",
+            "https://proxydb.net/?protocol=https&protocol=socks4&protocol=socks5&anonlvl=2&anonlvl=3&anonlvl=4&country="
+            + country_code.upper(),
         ),
     ]
 
@@ -38,7 +43,7 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -143,4 +148,10 @@ def proxydb_net(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(proxydb_net())
+    pr_list = proxydb_net(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
+    )
+    for pr in pr_list:
+        print(pr)
