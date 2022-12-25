@@ -2,6 +2,7 @@ def crawl_online_proxy_services(
     existing_proxies: list = [],
     save_queue_file: bool = False,
     country_code: str = "ru",
+    country_name: str = "russia",
 ) -> set:
     # BUILT-INS
     import concurrent.futures  # multithreading
@@ -42,23 +43,23 @@ def crawl_online_proxy_services(
         res = set()
         futures = [
             # executor.submit(crawlweb_free_proxy_cz.free_proxy_cz),  # bans a lot
-            executor.submit(crawlweb_freeproxy_world.freeproxy_world, country_code="ru"), # add paging
-            executor.submit(crawlweb_freeproxylist_cc.freeproxylist_cc, country_name="Russia"), # add paging
-            executor.submit(crawlweb_geonode_com.geonode_com, country_code="ru"), # add paging
-            executor.submit(crawlweb_good_proxies_ru.good_proxies_ru, country_code="ru"),
-            executor.submit(crawlweb_online_proxy_ru.online_proxy_ru),
-            executor.submit(crawlweb_premproxy_com.premproxy_com, country_name = "Russia"),
-            executor.submit(crawlweb_proxy_nova_com.proxy_nova_com, country_code="ru"),
-            executor.submit(crawlweb_proxy_tools_com.proxy_tools_com, country_code="ru"),  # captcha
-            executor.submit(crawlweb_proxydb_net.proxydb_net),  # captcha
-            executor.submit(crawlweb_proxydocker_com.proxydocker_com, country_name="Russia"),
-            executor.submit(crawlweb_proxyranker_com.proxyranker_com, country_name="russian_federation"),
-            executor.submit(crawlweb_proxyscan_io.proxyscan_io, country="ru"),
-            executor.submit(crawlweb_proxyscrape_com.proxyscrape_com, country_code="ru"),
-            executor.submit(crawlweb_proxyservers_pro.proxyservers_pro, country_code="ru"),
-            executor.submit(crawlweb_socks_proxy_net.socks_proxy_net, country_name = "Russia"),
-            executor.submit(crawlweb_spys_one.spys_one, country_code="ru"),  # minimized windows hides data
-            executor.submit(crawlweb_spyss_me.spyss_github, country_code="ru"),
+            executor.submit(crawlweb_freeproxy_world.freeproxy_world, country_code=country_code), # add paging
+            executor.submit(crawlweb_freeproxylist_cc.freeproxylist_cc, country_name=country_name), # add paging
+            executor.submit(crawlweb_geonode_com.geonode_com, country_code=country_code), # add paging
+            executor.submit(crawlweb_good_proxies_ru.good_proxies_ru, country_code=country_code),
+            executor.submit(crawlweb_online_proxy_ru.online_proxy_ru, country_code=country_code), # skips if not ru
+            executor.submit(crawlweb_premproxy_com.premproxy_com, country_name=country_name),
+            executor.submit(crawlweb_proxy_nova_com.proxy_nova_com, country_code=country_code),
+            executor.submit(crawlweb_proxy_tools_com.proxy_tools_com, country_code=country_code),  # captcha
+            executor.submit(crawlweb_proxydb_net.proxydb_net, country_code=country_code),  # captcha
+            executor.submit(crawlweb_proxydocker_com.proxydocker_com, country_name=country_name),
+            executor.submit(crawlweb_proxyranker_com.proxyranker_com, country_name=country_name),
+            executor.submit(crawlweb_proxyscan_io.proxyscan_io, country_code=country_code),
+            executor.submit(crawlweb_proxyscrape_com.proxyscrape_com, country_code=country_code),
+            executor.submit(crawlweb_proxyservers_pro.proxyservers_pro, country_code=country_code),
+            executor.submit(crawlweb_socks_proxy_net.socks_proxy_net, country_name=country_name),
+            executor.submit(crawlweb_spys_one.spys_one, country_code=country_code),  # minimized windows hides data
+            executor.submit(crawlweb_spyss_me.spyss_github, country_code=country_code),
             ##################### PARSE PROXY TYPES !! #######################
             # https://www.proxyhub.me/en/ru-free-proxy-list.html  abnormal paging count
             # https://premiumproxy.net/top-country-proxy-list/RU-Russia ## COPY OF spys_one

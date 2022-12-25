@@ -26,8 +26,6 @@ def premproxy_com(
 
     urls = [
         ("all", "https://premproxy.com/proxy-by-country/"),
-        ("all", "https://premproxy.com/proxy-by-country/Russian-Federation-01.htm"),
-        ("all", "https://premproxy.com/proxy-by-country/Russian-Federation-02.htm"),
     ]
 
     options = Options()
@@ -74,14 +72,21 @@ def premproxy_com(
                 by=By.XPATH,
                 value='//*[@id="countries"]/div/a[contains(text(),"'
                 + country_name.capitalize()
-                + '")]',
+                + '")][1]',
             )
-            print(country_select)
-            # sleep(TMOUT//2)
+            country_select.click()
         except Exception:
             print(SERVICE_NAME, "Country select page changed, can't proceed.")
             return None
 
+        try:
+            ready = WebDriverWait(driver, TMOUT).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+        except Exception:
+            print(SERVICE_NAME, "No response from page", url)
+            return None
+        
         try:
             rows_count = len(
                 driver.find_elements(

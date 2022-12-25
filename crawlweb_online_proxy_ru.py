@@ -1,8 +1,9 @@
 def online_proxy_ru(
     minimized: bool = False,
     hideBrowser: bool = False,
-    # country_code: str = "ru",
+    country_code: str = "ru",
 ) -> set:
+
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -23,6 +24,10 @@ def online_proxy_ru(
     SERVICE_NAME = "Online-proxy.ru:"
     TMOUT = 20
     export_proxies = set()
+
+    if country_code != "ru":
+        print(SERVICE_NAME, "skipped RU only service")
+        return None
 
     urls = [
         ("all", "http://online-proxy.ru/index.html?sort=find_time"),

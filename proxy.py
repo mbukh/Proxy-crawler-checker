@@ -3,7 +3,8 @@ def main(
     minimum_proxy_for_recheck: int = 70,
     clear_queue: bool = False,
     accumulate_queue: bool = False,
-    country_code: str = "RU",
+    country_code: str = "ru",
+    country_name: str = "russia"
 ) -> int:
     """
     MAIN FUNCTION
@@ -142,6 +143,7 @@ def main(
                 existing_proxies=queue_proxies,
                 save_queue_file=accumulate_queue,
                 country_code=country_code,
+                country_name=country_name,
             )
             force_online_crawl = False
         else:
@@ -278,6 +280,13 @@ if __name__ == "__main__":
         help="a country code to search proxies for (default: ru)",
         default="ru",
     )
+    parser.add_argument(
+        "--country-name",
+        "-cn",
+        type=str,
+        help="a country name to search proxies for (default: russia)",
+        default="russia",
+    )
     args = parser.parse_args()
 
     if args.force:
@@ -312,10 +321,17 @@ if __name__ == "__main__":
     else:
         country_code = "ru"
 
+    if args.country_name:
+        country_name = args.country_name.lower()
+        print("Country name set for", country_name.lower())
+    else:
+        country_code = "russia"
+
     main(
         force_online_crawl=force_online_crawl,
         minimum_proxy_for_recheck=minimum_proxy_for_recheck,
         clear_queue=clear_queue,
         accumulate_queue=accumulate_queue,
         country_code=country_code,
+        country_name=country_name,
     )
