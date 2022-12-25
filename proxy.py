@@ -1,4 +1,11 @@
-def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, clear_queue: bool = False, accumulate_queue: bool = False) -> int:
+def main(
+    force_online_crawl: bool = False,
+    minimum_proxy_for_recheck: int = 70,
+    clear_queue: bool = False,
+    accumulate_queue: bool = False,
+    country_code: str = "ru",
+    country_name: str = "russia"
+) -> int:
     """
     MAIN FUNCTION
     """
@@ -27,6 +34,7 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
         return -1
     try:
         from webdriver_manager.chrome import ChromeDriverManager
+
         # By default, all driver binaries are saved to user.home/.wdm folder.
         # You can override this setting and save binaries to project.root/.wdm.
         os.environ["WDM_LOCAL"] = "1"
@@ -93,10 +101,9 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
     # CLEAR UNCHECKED QUEUE
     if clear_queue:
         try:
-            open(SCRIPT_DIR + "proxies_queue_unchecked.txt", 'w').close()
+            open(SCRIPT_DIR + "proxies_queue_unchecked.txt", "w").close()
         except:
             print('Can\'t access file "proxies_queue_unchecked.txt"\n')
-
 
     # MAIN LOOP:
     # NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
@@ -135,6 +142,8 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
             queue_proxies = crawl_proxy_services.crawl_online_proxy_services(
                 existing_proxies=queue_proxies,
                 save_queue_file=accumulate_queue,
+                country_code=country_code,
+                country_name=country_name,
             )
             force_online_crawl = False
         else:
@@ -232,11 +241,52 @@ def main(force_online_crawl: bool = False, minimum_proxy_for_recheck: int = 70, 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Crawl and parse proxies. By mbukhman.")
-    parser.add_argument('--force', '-f', help='force full crawl with the first run', default=False, action="store_true")
-    parser.add_argument('--min-proxies', '-mp', type=int, metavar='n', help='minimum proxies count (n) to restart crawling immediately (default 70)', default=70)
-    parser.add_argument('--clear_queue', '-clq', help='clean unchecked queue left from previous runs', default=False, action="store_true")
-    parser.add_argument('--accumulate_queue', '-accq', help='accumulate old unchecked queue between runs, much slower checks', default=False, action="store_true")
+    parser = argparse.ArgumentParser(
+        description="Crawl and parse proxies. By mbukhman."
+    )
+    parser.add_argument(
+        "--force",
+        "-f",
+        default=False,
+        action="store_true",
+        help="force full crawl with the first run",
+    )
+    parser.add_argument(
+        "--min-proxies",
+        "-mp",
+        type=int,
+        metavar="n",
+        help="minimum proxies count (n) to restart crawling immediately (default 70)",
+        default=70,
+    )
+    parser.add_argument(
+        "--clear-queue",
+        "-clq",
+        default=False,
+        action="store_true",
+        help="clean unchecked queue left from previous runs",
+    )
+    parser.add_argument(
+        "--accumulate-queue",
+        "-accq",
+        default=False,
+        action="store_true",
+        help="accumulate old unchecked queue between runs, much slower checks",
+    )
+    parser.add_argument(
+        "--country-code",
+        "-cc",
+        type=str,
+        help="a country code to search proxies for (default: ru)",
+        default="ru",
+    )
+    parser.add_argument(
+        "--country-name",
+        "-cn",
+        type=str,
+        help="a country name to search proxies for (default: russia)",
+        default="russia",
+    )
     args = parser.parse_args()
 
     if args.force:
@@ -259,8 +309,29 @@ if __name__ == "__main__":
 
     if args.accumulate_queue:
         accumulate_queue = True
-        print("Saving unchecked queue in proxies_queue_unchecked.txt between runs. Might be slow.")
+        print(
+            "Saving unchecked queue in proxies_queue_unchecked.txt between runs. Might be slow."
+        )
     else:
         accumulate_queue = False
 
-    main(force_online_crawl=force_online_crawl, minimum_proxy_for_recheck=minimum_proxy_for_recheck, clear_queue=clear_queue, accumulate_queue=accumulate_queue)
+    if args.country_code:
+        country_code = args.country_code.lower()
+        print("Country code set for", country_code.lower())
+    else:
+        country_code = "ru"
+
+    if args.country_name:
+        country_name = args.country_name.lower()
+        print("Country name set for", country_name.lower())
+    else:
+        country_code = "russia"
+
+    main(
+        force_online_crawl=force_online_crawl,
+        minimum_proxy_for_recheck=minimum_proxy_for_recheck,
+        clear_queue=clear_queue,
+        accumulate_queue=accumulate_queue,
+        country_code=country_code,
+        country_name=country_name,
+    )

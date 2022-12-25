@@ -1,35 +1,38 @@
-def spyss_github(
-    country_code: str = "RU",
+def geonode_com(
+    country_code: str = "ru",
 ) -> set:
     import requests
     from time import sleep
 
-    SERVICE_NAME = "Spys.me:"
+    SERVICE_NAME = "Geonode.com:"
     TMOUT = 20
     export_proxies = set()
 
     urls = [
-        ("all", "https://spys.me/socks.txt"),
-        ("all", "https://spys.me/proxy.txt"),
+        (
+            "all",
+            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&country="
+            + country_code.upper()
+            + "&anonymityLevel=elite&anonymityLevel=anonymous",
+        )
     ]
 
-    for proxy_type, url in urls:
+    for protocol, url in urls:
         try:
             resp = requests.get(url, timeout=TMOUT)
             if resp.status_code == 200:
                 export_proxies.update(
                     [
-                        x.split()[0]
-                        for x in resp.text.split("\n")
-                        if (x.find(country_code.upper()) != -1)
-                        # and (x.find("-S") != -1) / SSL SUPPORT ONLY
+                        x["protocols"][0].lower() + "://" + x["ip"] + ":" + x["port"]
+                        for x in resp.json()["data"]
                     ]
                 )
             else:
                 print(SERVICE_NAME, "url response error", url)
-        except Exception:
+        except Exception as e:
             print(SERVICE_NAME, "Can't connect to the server.")
             return None
+
         sleep(5)
 
     print(SERVICE_NAME, len(export_proxies))
@@ -37,7 +40,7 @@ def spyss_github(
 
 
 if __name__ == "__main__":
-    pr_list = spyss_github(
+    pr_list = geonode_com(
         country_code="il",
     )
     for pr in pr_list:

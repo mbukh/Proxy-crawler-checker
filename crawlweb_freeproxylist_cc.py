@@ -1,7 +1,7 @@
-def proxy_nova_com(
+def freeproxylist_cc(
     minimized: bool = False,
     hideBrowser: bool = False,
-    country_code: str = "ru",
+    country_name: str = "Russia",
 ) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
@@ -20,21 +20,21 @@ def proxy_nova_com(
     # You can override this setting and save binaries to project.root/.wdm.
     os.environ["WDM_LOCAL"] = "1"
 
-    SERVICE_NAME = "Proxynova.com:"
+    SERVICE_NAME = "Feeproxylist.cc"
     TMOUT = 20
     export_proxies = set()
 
     urls = [
         (
             "all",
-            "https://www.proxynova.com/proxy-server-list/country-"
-            + country_code.lower()
+            "https://freeproxylist.cc/online/"
+            + country_name.capitalize().replace(" ", "+")
             + "/",
         ),
     ]
 
     options = Options()
-    options.headless = True
+    options.headless = hideBrowser
     options.add_argument("--window-size=1400,900")
     options.add_argument("--disable-gpu")
     options.add_argument("--ignore-certificate-errors")
@@ -70,7 +70,7 @@ def proxy_nova_com(
         try:
             rows_count = len(
                 driver.find_elements(
-                    by=By.XPATH, value='//table[@id="tbl_proxy_list"]/tbody[1]/tr'
+                    by=By.XPATH, value='//table[@id="proxylisttable"]/tbody[1]/tr'
                 )
             )
             if rows_count == 0:
@@ -83,13 +83,13 @@ def proxy_nova_com(
             try:
                 ip = driver.find_element(
                     by=By.XPATH,
-                    value='//table[@id="tbl_proxy_list"]/tbody[1]/tr['
+                    value='//table[@id="proxylisttable"]/tbody[1]/tr['
                     + str(row_num + 1)
                     + "]/td[1]",
                 )
                 port = driver.find_element(
                     by=By.XPATH,
-                    value='//table[@id="tbl_proxy_list"]/tbody[1]/tr['
+                    value='//table[@id="proxylisttable"]/tbody[1]/tr['
                     + str(row_num + 1)
                     + "]/td[2]",
                 )
@@ -104,10 +104,10 @@ def proxy_nova_com(
 
 
 if __name__ == "__main__":
-    pr_list = proxy_nova_com(
+    pr_list = freeproxylist_cc(
         minimized=False,
         hideBrowser=False,
-        country_code="il",
+        country_name="Israel",
     )
     for pr in pr_list:
         print(pr)

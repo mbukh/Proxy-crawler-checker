@@ -1,4 +1,8 @@
-def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
+def socks_proxy_net(
+    minimized: bool = False,
+    hideBrowser: bool = True,
+    country_name: str = "Russia",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -32,7 +36,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -83,7 +87,7 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
                     + str(row_num + 1)
                     + "]/td[4]",
                 )
-                if not "Russian" in country.text:
+                if not country_name.capitalize() in country.text:
                     continue
                 ip = driver.find_element(
                     by=By.XPATH,
@@ -119,4 +123,10 @@ def socks_proxy_net(minimized: bool = False, hideBrowser: bool = True) -> set:
 
 
 if __name__ == "__main__":
-    print(socks_proxy_net())
+    pr_list = socks_proxy_net(
+        minimized=False,
+        hideBrowser=False,
+        country_name="Israel",
+    )
+    for pr in pr_list:
+        print(pr)

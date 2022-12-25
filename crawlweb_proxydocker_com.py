@@ -1,4 +1,8 @@
-def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
+def proxydocker_com(
+    minimized: bool = False,
+    hideBrowser: bool = True,
+    country_name: str = "Russia",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -22,7 +26,11 @@ def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     export_proxies = set()
 
     urls = [  # pages
-        ("all", "https://www.proxydocker.com/en/proxylist/country/Russia"),
+        (
+            "all",
+            "https://www.proxydocker.com/en/proxylist/country/"
+            + country_name.capitalize(),
+        ),
     ]
 
     options = Options()
@@ -33,7 +41,7 @@ def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -107,7 +115,7 @@ def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
             try:
                 next_page = WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located(
-                        (By.XPATH, '//*[@id="nextbtn"]/a[contains(.,"Next")]')
+                        (By.XPATH, '//li[contains(@class, "page-item") and not(contains(@class,"disabled")) and @id="nextbtn"]/a')
                     )
                 )
                 # PAUSE BETWEEN PAGES, TIME TO LOAD
@@ -130,4 +138,10 @@ def proxydocker_com(minimized: bool = False, hideBrowser: bool = True) -> set:
 
 
 if __name__ == "__main__":
-    print(proxydocker_com())
+    pr_list = proxydocker_com(
+        minimized=False,
+        hideBrowser=False,
+        country_name="Israel",
+    )
+    for pr in pr_list:
+        print(pr)

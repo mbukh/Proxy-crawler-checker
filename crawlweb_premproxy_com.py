@@ -1,4 +1,8 @@
-def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
+def premproxy_com(
+    minimized: bool = False,
+    hideBrowser: bool = True,
+    country_name: str = "Russia",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -21,8 +25,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     export_proxies = set()
 
     urls = [
-        ("all", "https://premproxy.com/proxy-by-country/Russian-Federation-01.htm"),
-        ("all", "https://premproxy.com/proxy-by-country/Russian-Federation-02.htm"),
+        ("all", "https://premproxy.com/proxy-by-country/"),
     ]
 
     options = Options()
@@ -33,7 +36,7 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -62,6 +65,28 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
         except Exception:
             print(SERVICE_NAME, "Timeout connect to a page", url)
 
+        # CLICK ON COUNTRY
+        try:
+            # COUNTRY
+            country_select = driver.find_element(
+                by=By.XPATH,
+                value='//*[@id="countries"]/div/a[contains(text(),"'
+                + country_name.capitalize()
+                + '")][1]',
+            )
+            country_select.click()
+        except Exception:
+            print(SERVICE_NAME, "Country select page changed, can't proceed.")
+            return None
+
+        try:
+            ready = WebDriverWait(driver, TMOUT).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+        except Exception:
+            print(SERVICE_NAME, "No response from page", url)
+            return None
+        
         try:
             rows_count = len(
                 driver.find_elements(
@@ -94,4 +119,6 @@ def premproxy_com(minimized: bool = False, hideBrowser: bool = True) -> set:
 
 
 if __name__ == "__main__":
-    print(premproxy_com())
+    pr_list = premproxy_com(minimized=False, hideBrowser=False, country_name="Israel")
+    for pr in pr_list:
+        print(pr)

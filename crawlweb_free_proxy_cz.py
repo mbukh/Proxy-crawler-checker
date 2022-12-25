@@ -1,4 +1,9 @@
-def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
+def free_proxy_cz(
+    minimized: bool = False,
+    hideBrowser: bool = False,
+    country_code: str = "ru",
+    force_all: bool = False,
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -22,11 +27,33 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
     export_proxies = set()
 
     urls = [  # pages
-        ("https", "http://free-proxy.cz/en/proxylist/country/RU/https/ping/level1"),
-        ("https", "http://free-proxy.cz/en/proxylist/country/RU/https/ping/level2"),
-        ("allsocks", "http://free-proxy.cz/en/proxylist/country/RU/socks/ping/level1"),
-        ("allsocks", "http://free-proxy.cz/en/proxylist/country/RU/socks/ping/level2"),
+        (
+            "https",
+            "http://free-proxy.cz/en/proxylist/country/"
+            + country_code.upper()
+            + "/https/ping/level1",
+        ),
+        (
+            "https",
+            "http://free-proxy.cz/en/proxylist/country/"
+            + country_code.upper()
+            + "/https/ping/level2",
+        ),
+        (
+            "allsocks",
+            "http://free-proxy.cz/en/proxylist/country/"
+            + country_code.upper()
+            + "/socks/ping/level1",
+        ),
+        (
+            "allsocks",
+            "http://free-proxy.cz/en/proxylist/country/"
+            + country_code.upper()
+            + "/socks/ping/level2",
+        ),
     ]
+    if force_all:
+        urls = [("all", "http://free-proxy.cz/en/proxylist/country/IL/all/ping/all")]
 
     options = Options()
     options.headless = hideBrowser
@@ -146,4 +173,11 @@ def free_proxy_cz(minimized: bool = False, hideBrowser: bool = False) -> set:
 
 
 if __name__ == "__main__":
-    print(free_proxy_cz())
+    pr_list = free_proxy_cz(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
+        force_all=True,
+    )
+    for pr in pr_list:
+        print(pr)

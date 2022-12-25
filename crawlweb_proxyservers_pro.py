@@ -1,4 +1,8 @@
-def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
+def proxyservers_pro(
+    minimized: bool = False,
+    hideBrowser: bool = True,
+    country_code: str = "ru",
+) -> set:
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
@@ -24,7 +28,9 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
     urls = [  # pages
         (
             "all",
-            "https://proxyservers.pro/proxy/list/country/RU/order/updated/order_dir/desc/page/1",
+            "https://proxyservers.pro/proxy/list/country/"
+            + country_code.upper()
+            + "/order/updated/order_dir/desc/page/1",
         ),
     ]
 
@@ -38,7 +44,7 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    
+
     try:
         driver = Browser(
             service=Service(
@@ -141,9 +147,10 @@ def proxyservers_pro(minimized: bool = False, hideBrowser: bool = True) -> set:
 
 
 if __name__ == "__main__":
-    print(
-        proxyservers_pro(
-            minimized=False,
-            hideBrowser=True,
-        )
+    pr_list = proxyservers_pro(
+        minimized=False,
+        hideBrowser=False,
+        country_code="il",
     )
+    for pr in pr_list:
+        print(pr)
