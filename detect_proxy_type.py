@@ -81,7 +81,7 @@ def detect_proxies_type(
         checkUrls = [
             "https://api.ipify.org/",  # txt or https://api.ipify.org?format=json
             "https://api.bigdatacloud.net/data/client-ip",  # json
-            # "https://api.ip.sb/ip",  # txt no responce
+            "https://api.ip.sb/ip",  # txt no response
             "https://api.myip.com/",
             "https://api.myip.la",  # txt or https://api.myip.la/cn?json
             "https://curlmyip.net/",  # txt
@@ -96,7 +96,6 @@ def detect_proxies_type(
             "https://ipinfo.io/ip",  # txt
             "https://ipecho.net/plain",  # txt
             "https://ip4only.me/api/",  # ± txt
-            # "https://ip-api.com/json/", # status fail membership $$
             "https://jsonip.com/",
             "https://l2.io/ip",  # txt or https://www.l2.io/ip.json
             "https://trackip.net/ip",  # txt or https://www.trackip.net/ip?json
@@ -233,12 +232,12 @@ def detect_proxies_type(
 
 if __name__ == "__main__":
     proxies = []
-    print(
-        detect_proxies_type(
-            queue_proxies=proxies,
-            save_anonymous=False,
-            debug=False,
-            concurrent_checks=35,
-            scan_manual_proxies=True,
-        )
+    pr_list = detect_proxies_type(
+        queue_proxies=proxies,
+        save_anonymous=False,
+        debug=False,
+        concurrent_checks=35,
+        scan_manual_proxies=True,
     )
+    for pr in pr_list:
+        print(pr)
