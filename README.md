@@ -5,14 +5,14 @@ This project aims to gather working anonymous proxy servers in Russia and put do
 The `proxy.py` script is the main component of this project. It has the following command-line options:
 
 ### Usage
-```sh
+```bash
 proxy.py [-h] [--force_online_crawl] [--minimum_proxy_for_recheck MINIMUM_PROXY_FOR_RECHECK]
                 [--clear_queue] [--accumulate_queue] [--country_code COUNTRY_CODE] [--country_name COUNTRY_NAME]
 ```
 
 ### Crawl and parse proxies.
 
-```sh
+```bash
 optional arguments:
   -h, --help            show this help message and exit
   --force_online_crawl  force to crawl online proxy services even if it is not needed
@@ -30,18 +30,18 @@ optional arguments:
 
 Clone the repository to your local machine.
 
-```sh
+```bash
 git clone https://github.com/mbukh/Russian-Anonymous-Proxy-Server-Scraper.git
 ```
 
 ## Install the required dependencies.
 
-```sh
+```bash
 pip install -r requirements.txt
 ```
 
 Run the `proxy.py` script with the desired command-line options.
 
-```sh
+```bash
 python proxy.py --force_online_crawl --minimum_proxy_for_recheck 70 --accumulate_queue --country_code ru --country_name russia
 ```
