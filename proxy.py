@@ -107,7 +107,8 @@ def main(
 
     # MAIN LOOP:
     # NOT ENOUGH PROXIES -> FULL CRAWL & RESCAN : ELSE -> RESCAN
-    while True:
+    running = True
+    while running:
 
         try:
             # FILE "proxies_manual_queue.txt" AGE IN MINUTES
